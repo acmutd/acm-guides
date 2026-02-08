@@ -3,15 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { peechi, orb1, orb2, orb3, orb4, orb5, orb6, orb7 } from './data';
 
 const multipliers: { [key: string]: number } = {
-  peechi: 0.05,
-  orb1: 0.1,
-  orb2: 0.07,
-  orb3: 0.1,
-  orb4: 0.08,
-  orb5: 0.06,
-  orb6: 0.09,
-  orb7: 0.08,
-  orb8: 0.07,
+  peechi: 0.03,
+  orb1: 0.05,
+  orb2: 0.04,
+  orb3: 0.06,
+  orb4: 0.04,
+  orb5: 0.03,
+  orb6: 0.05,
+  orb7: 0.04,
 };
 
 const ParallaxImages: React.FC = () => {
@@ -19,37 +18,34 @@ const ParallaxImages: React.FC = () => {
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
+      if (typeof window === 'undefined') return;
       const { width, height } = document.documentElement.getBoundingClientRect();
       const offX = e.clientX - width * 0.5;
-      const offY = e.clientY - height * 0.1;
+      const offY = e.clientY - height * 0.5;
 
-      const layers = document.querySelectorAll('.img');
+      const layers = document.querySelectorAll('.parallax-layer');
       layers.forEach((layer) => {
-        const imgClass = (layer as HTMLElement).classList[1]; // Assuming the class name is the image identifier
-        const multiplier = multipliers[imgClass] || 0.02; // Default multiplier if not found
+        const classes = (layer as HTMLElement).classList;
+        let imgClass = '';
+        classes.forEach(c => { if(multipliers[c]) imgClass = c; });
 
-        const x = offX * -multiplier; // Adjust multiplier for desired effect
-        const y = offY * -multiplier * 1.5; // Adjust multiplier for desired effect
-        (layer as HTMLElement).style.transform = `translateX(${x}px) translateY(${y}px)`;
+        const multiplier = multipliers[imgClass] || 0.02;
+        const x = offX * -multiplier;
+        const y = offY * -multiplier;
+        (layer as HTMLElement).style.transform = `translate(${x}px, ${y}px)`;
       });
 
-      if (transition) {
-        // Set transition state to false when mouse is moving
-        setTransition(false);
-      }
+      if (transition) setTransition(false);
     };
 
     const handleMouseLeave = () => {
-      setTransition(true); // Start transition when mouse leaves
-      const layers = document.querySelectorAll('.img');
-      layers.forEach((layer) => {
-        (layer as HTMLElement).style.transform = `translateX(0) translateY(0)`;
+      setTransition(true);
+      document.querySelectorAll('.parallax-layer').forEach((layer) => {
+        (layer as HTMLElement).style.transform = `translate(0px, 0px)`;
       });
     };
 
-    const handleMouseEnter = () => {
-      setTransition(false); // Stop transition when mouse enters
-    };
+    const handleMouseEnter = () => setTransition(false);
 
     document.body.addEventListener('mousemove', handleMouseMove);
     document.body.addEventListener('mouseleave', handleMouseLeave);
@@ -62,65 +58,69 @@ const ParallaxImages: React.FC = () => {
     };
   }, [transition]);
 
+  const styles = `
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) translateX(0px); }
+      33% { transform: translateY(-10px) translateX(5px); }
+      66% { transform: translateY(5px) translateX(-5px); }
+    }
+    .animate-float {
+      animation: float infinite ease-in-out;
+    }
+  `;
+
+  const renderOrb = (src: string, name: string, className: string, size: string, blur = "0px") => {
+      // eslint-disable-next-line react-hooks/purity
+    const duration = 10 + Math.random() * 10 + "s";
+      // eslint-disable-next-line react-hooks/purity
+    const delay = "-" + Math.random() * 10 + "s";
+
+    return (
+        <div className={`parallax-layer absolute ${name} ${className} z-0 transition-transform duration-1000 ease-out`}>
+            <img
+                src={src}
+                alt=""
+                className={`animate-float opacity-70 hover:opacity-100 transition-opacity ${size}`}
+                style={{
+                    filter: `blur(${blur})`,
+                    animationDuration: duration,
+                    animationDelay: delay
+                }}
+            />
+        </div>
+    );
+  };
+
   return (
-    <>
-      <img
-        className={`img peechi absolute z-20 h-auto w-32 sm:w-48 lg:w-64 transition-transform duration-1000 ease-out md:opacity-100 right-[0.5%] top-[9rem] lg:right-[10%] lg:top-[6rem]`}
-        src={peechi}
-        alt="image"
-      />
-      <img
-        className={`img orb1 absolute left-[10vw] z-0 transition-transform duration-1000 ease-out hidden md:block`}
-        src={orb1}
-        alt="image"
-      />
-      <img
-        className={`img orb2 absolute right-[8vw] top-[15rem] z-0 transition-transform duration-1000 ease-out`}
-        src={orb2}
-        alt="image"
-      />
-      <img
-        className={`img orb3 absolute left-[5vw] top-[25rem] z-0 transition-transform duration-1000 ease-out`}
-        src={orb3}
-        alt="image"
-      />
-      <img
-        className={`img orb4 absolute right-[25vw] top-[10rem] z-0 transition-transform duration-1000 ease-out hidden lg:block`}
-        src={orb4}
-        alt="image"
-      />
-      <img
-        className={`img orb5 z-0 absolute left-[75vw] top-[36rem] transition-transform duration-1000 ease-out hidden md:block`}
-        src={orb5}
-        alt="image"
-      />
-      <img
-        className={`img orb6 absolute right-[25vw] top-[28rem] z-0 transition-transform duration-1000 ease-out hidden lg:block`}
-        src={orb6}
-        alt="image"
-      />
-      <img
-        className={`img orb7 absolute left-[-5vw] top-[10rem] z-0 transition-transform duration-1000 ease-out`}
-        src={orb7}
-        alt="image"
-      />
-      <img
-        className={`img orb8 absolute right-[-2vw] top-[20rem] z-0 transition-transform duration-1000 ease-out hidden sm:block`}
-        src={orb2}
-        alt="image"
-      />
-      <img
-        className={`img orb8 absolute right-[-7vw] top-[40rem] z-0 transition-transform duration-1000 ease-out hidden md:block`}
-        src={orb4}
-        alt="image"
+    <div className="pointer-events-none fixed inset-0 overflow-hidden">
+      <style>{styles}</style>
+
+      <div className="absolute inset-0 opacity-[0.03] z-[1]"
+           style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
       />
 
-      <div className="absolute left-[12vw] top-[15rem] h-80 w-80 rounded-full bg-[#8135DA] opacity-20 blur-[7rem]"></div>
-      <div className="absolute right-[12vw] top-[10rem] h-64 w-64 rounded-full bg-[#3ADAB0] opacity-20 blur-[7rem]"></div>
-      <div className="absolute right-[30vw] top-[8rem] h-48 w-48 rounded-full bg-[#FF0052] opacity-20 blur-[6rem] hidden md:block"></div>
-      <div className="absolute left-[30vw] top-[30rem] h-72 w-72 rounded-full bg-[#E39E34] opacity-25 blur-[7rem] hidden sm:block"></div>
-      <div className="absolute left-[70vw] top-[18rem] h-56 w-56 rounded-full bg-[#8135DA] opacity-20 blur-[6rem] hidden lg:block"></div>
-    </>
+      <div className="parallax-layer peechi absolute z-20 right-[12%] top-[15%] transition-transform duration-1000 ease-out">
+        <img
+            className="w-32 sm:w-40 lg:w-56 animate-float drop-shadow-[0_0_50px_rgba(255,255,255,0.3)]"
+            src={peechi}
+            alt="peechi"
+            style={{ animationDuration: '6s' }}
+        />
+      </div>
+
+      {renderOrb(orb1, "orb1", "left-[5%] top-[10%]", "w-32", "2px")}
+      {renderOrb(orb2, "orb2", "right-[10%] bottom-[20%]", "w-48", "1px")}
+      {renderOrb(orb3, "orb3", "left-[15%] bottom-[15%]", "w-32", "0px")}
+      {renderOrb(orb4, "orb4", "right-[25%] top-[15%]", "w-40", "0px")}
+      {renderOrb(orb5, "orb5", "left-[40%] top-[60%]", "w-24", "0px")}
+      {renderOrb(orb6, "orb6", "left-[20%] top-[30%]", "w-48", "0px")}
+      {renderOrb(orb7, "orb7", "left-[-5%] top-[30%]", "w-64", "4px")}
+      {renderOrb(orb1, "orb1", "left-[70%] top-[80%]", "w-42", "2px")}
+
+      <div className="absolute -left-[10%] -top-[10%] w-[50vw] h-[50vw] rounded-full bg-[radial-gradient(circle,rgba(129,53,218,0.25)_0%,transparent_70%)] z-0" />
+      <div className="absolute -right-[10%] top-[20%] w-[40vw] h-[40vw] rounded-full bg-[radial-gradient(circle,rgba(58,218,176,0.15)_0%,transparent_70%)] z-0" />
+      <div className="absolute left-[30%] -bottom-[20%] w-[60vw] h-[60vw] rounded-full bg-[radial-gradient(circle,rgba(227,158,52,0.15)_0%,transparent_70%)] z-0" />
+    </div>
   );
 };
 

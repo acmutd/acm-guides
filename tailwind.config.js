@@ -1,4 +1,8 @@
-module.exports = {
+import typography from "@tailwindcss/typography";
+import tailwindAnimate from "tailwindcss-animate";
+
+/** @type {import('tailwindcss').Config} */
+export default {
   darkMode: ["class"],
   content: [
     "./index.html",
@@ -105,7 +109,6 @@ module.exports = {
             "--tw-prose-code": theme("colors.orange.300"),
             "--tw-prose-pre-bg": "rgba(255, 255, 255, 0.05)",
             "--tw-prose-pre-code": theme("colors.zinc.200"),
-            
             h1: { fontFamily: "Gilroy, sans-serif", fontWeight: "700" },
             h2: { fontFamily: "Gilroy, sans-serif", fontWeight: "600", marginTop: "2em" },
             code: { backgroundColor: "rgba(255,255,255,0.1)", padding: "0.2em 0.4em", borderRadius: "0.25rem", fontWeight: "400" },
@@ -117,7 +120,7 @@ module.exports = {
     },
   },
   plugins: [
-    require("tailwindcss-animate"),
-    require("@tailwindcss/typography"),
+    tailwindAnimate,
+    typography,
   ],
 };

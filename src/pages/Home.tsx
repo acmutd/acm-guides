@@ -3,83 +3,48 @@ import { Link } from "react-router-dom";
 import { getRecentWorkshops } from "../docs/registry";
 import ParallaxImages from '../components/parallaxImages';
 
-// Helper for the gradient text inside the hero
 function GradientText({
   children,
-  gradient = "bg-acm-gradient"
+  gradient = "bg-development-gradient"
 }: {
   children: React.ReactNode;
   gradient?: string
 }) {
   return (
-    <span className={`${gradient} bg-clip-text text-transparent bg-size-200`}>
+    <span className={`${gradient} bg-clip-text text-transparent bg-size-200 animate-gradient`}>
       {children}
     </span>
   );
 }
 
-// Workshop Card Component
-function WorkshopCard({
+function MiniWorkshopCard({
   to,
   title,
-  desc,
-  updated,
   badge,
-  index
 }: {
   to: string;
   title: string;
-  desc?: string;
-  updated?: string;
   badge?: string;
-  index: number;
 }) {
-  const gradients = [
-    "group-hover:border-pink-500/50",
-    "group-hover:border-blue-500/50",
-    "group-hover:border-green-500/50",
-    "group-hover:border-orange-500/50",
-  ];
-  const activeGradient = gradients[index % gradients.length];
-
   return (
     <Link
       to={to}
-      className={`
-        group relative flex flex-col justify-between
-        rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md
-        p-6 transition-all duration-300
-        hover:-translate-y-1 hover:bg-white/[0.07] hover:shadow-2xl
-        ${activeGradient}
-      `}
+      className="group relative flex min-w-[280px] flex-col justify-between rounded-xl bg-white/5 border border-white/10 p-4 transition-all duration-300 hover:bg-white/10 hover:border-pink-500/30 hover:-translate-y-1"
     >
-      <div>
-        <div className="flex items-start justify-between gap-4">
-          <h3 className="font-sans text-xl font-bold text-white tracking-wide">
-            {title}
-          </h3>
-          {badge && (
-            <span className="shrink-0 rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-md">
-              {badge}
-            </span>
-          )}
-        </div>
-        {desc && (
-          <p className="mt-3 text-sm text-white/60 leading-relaxed font-light">
-            {desc}
-          </p>
+      <div className="flex items-start justify-between gap-3">
+        <h3 className="font-sans text-sm font-bold text-white group-hover:text-pink-300 transition-colors line-clamp-2">
+          {title}
+        </h3>
+        {badge && (
+          <span className="shrink-0 rounded-full bg-pink-500/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-pink-200">
+            {badge}
+          </span>
         )}
       </div>
-
-      <div className="mt-6 flex items-center justify-between border-t border-white/5 pt-4">
-        <span className="text-xs text-white/40 font-mono">
-          {updated || "Recently"}
+      <div className="mt-3 flex items-center justify-end">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-white/40 group-hover:text-white transition-colors">
+            Open →
         </span>
-        <div className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center transition-colors group-hover:bg-white/20">
-          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </div>
       </div>
     </Link>
   );
@@ -89,115 +54,73 @@ export default function Home() {
   const recent = getRecentWorkshops(6);
 
   return (
-    // Added overflow-x-hidden to prevent horizontal scrolling
-    <main className="relative flex min-h-screen flex-col overflow-x-hidden bg-[url(/assets/apply/apply-bg.png)] bg-cover text-white font-sans">
+    <main className="relative h-screen w-full overflow-hidden bg-black text-white font-sans selection:bg-pink-500/30">
 
-      {/* Parallax Container */}
       <div className="absolute inset-0 z-0">
-         <ParallaxImages />
+        <ParallaxImages />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)] pointer-events-none" />
       </div>
 
-      {/* Hero Section */}
-      {/* Changed justify-center to justify-start and added pt-32/pt-48 to move it up */}
-      <div className="relative z-10 flex min-h-screen flex-col items-center justify-start pt-32 sm:pt-40 md:pt-48 px-6 sm:px-12 md:px-16 lg:px-24">
-        <div className="flex flex-col items-center justify-center w-full">
-          <div className="flex w-full max-w-7xl flex-col gap-y-8">
+      <div className="relative z-10 flex h-full flex-col justify-between px-6 py-12 md:px-12">
 
-            {/* The Main Hero Glass Container */}
-            <div
-              className={`background-container flex w-full flex-col items-center gap-y-4 rounded-3xl border border-primary/50 bg-gray-600/10 px-6 py-8 backdrop-blur-xl sm:px-12 sm:py-10 md:px-16 md:py-14 lg:px-24`}
-            >
-              {/* Top Tag */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 mb-2">
-                 <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-pink-500"></span>
-                 </span>
-                 <span className="text-[10px] font-bold tracking-widest uppercase text-white/80">
-                    ACM Development
-                 </span>
-              </div>
+        <div className="flex flex-1 flex-col items-center justify-center">
 
-              {/* Title */}
-              <h1 className="text-center text-3xl font-bold sm:text-4xl md:text-5xl lg:text-7xl lowercase">
-                acm utd <GradientText>guides</GradientText>
-              </h1>
-
-              {/* Description */}
-              <p className="md:text-md text-center text-base sm:text-lg lg:text-xl text-gray-200">
-                we&apos;re a team of students with one goal: building a greater, more collaborative
-                computing community. this is our knowledge base.
-              </p>
-
-              {/* Action Buttons */}
-              <div className="flex w-fit flex-row items-center justify-center gap-x-4 rounded-lg border border-primary/50 bg-gray-300/10 bg-acm-gradient px-4 py-3 sm:gap-x-6 sm:px-6 sm:py-4 md:px-8 mt-4">
-                <Link
-                  to="/docs/getting-started"
-                  className="text-sm font-bold text-white hover:text-white/80 transition-colors"
-                >
-                  start learning
-                </Link>
-                <div className="h-4 w-[1px] bg-white/30" />
-                <Link
-                  to="/docs/workshops"
-                  className="text-sm font-bold text-white hover:text-white/80 transition-colors"
-                >
-                  browse modules
-                </Link>
-              </div>
-
+            <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-700">
+                 <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 backdrop-blur-md shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+                    <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <span className="text-xs font-bold tracking-[0.2em] uppercase text-white/90">
+                        powered by ACM dev
+                    </span>
+                 </div>
             </div>
-          </div>
-        </div>
 
-        {/* Scroll Indicator - Pushed to absolute bottom of the screen view */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 transform animate-bounce">
-          <svg className="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
-        </div>
-      </div>
+            <h1 className="text-center text-6xl md:text-8xl font-black tracking-tighter lowercase animate-in zoom-in-95 duration-700 delay-100 drop-shadow-2xl">
+              acm <GradientText>guides</GradientText>
+            </h1>
 
-      {/* Content Section */}
-      <div className="relative z-10 py-10 sm:py-16 md:py-20 lg:py-24 px-6 sm:px-12 md:px-16 lg:px-24 max-w-7xl mx-auto w-full">
+            <p className="mt-6 max-w-xl text-center text-xl text-zinc-300 font-medium leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+              ACM's premier documentation site. <br/>
+              built by <span className="text-white decoration-pink-500 underline underline-offset-4">students</span>, for <span className="text-white decoration-blue-500 underline underline-offset-4">students</span>.
+            </p>
 
-        <div className="flex items-end justify-between mb-8">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold lowercase">just <GradientText gradient="bg-media-gradient">pushed</GradientText></h2>
-              <p className="text-white/50 mt-2 font-light text-sm sm:text-base">fresh guides from the team.</p>
+            <div className="mt-10 flex items-center gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
+                <Link
+                    to="/docs/getting-started"
+                    className="rounded-full bg-white text-black px-8 py-3 text-sm font-black uppercase tracking-wide hover:bg-zinc-200 hover:scale-105 transition-all shadow-[0_0_30px_rgba(255,255,255,0.3)]"
+                >
+                    Start Learning
+                </Link>
+                <Link
+                    to="/docs/workshops"
+                    className="rounded-full border border-white/20 bg-black/40 px-8 py-3 text-sm font-bold uppercase tracking-wide text-white hover:bg-white/10 hover:border-white/40 transition-all backdrop-blur-sm"
+                >
+                    All Modules
+                </Link>
             </div>
-            <Link to="/docs/workshops" className="hidden md:block text-sm font-bold text-white/70 hover:text-white transition-colors">
-              view all &rarr;
-            </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recent.map((w, i) => (
-              <WorkshopCard
-                key={w.slug}
-                index={i}
-                to={`/docs/${w.slug}`}
-                title={w.meta.title}
-                desc={w.meta.description}
-                updated={w.meta.updated}
-                badge={i === 0 ? "New" : undefined}
-              />
-            ))}
-        </div>
-
-        {/* Footer CTA */}
-        <div className="mt-24 flex w-full flex-col items-center justify-center">
-            <div className="background-container flex w-full flex-col items-center gap-y-4 rounded-3xl border border-primary/30 bg-gray-600/10 px-6 py-8 backdrop-blur-xl text-center">
-                <h2 className="text-xl font-bold lowercase sm:text-2xl">
-                    contribute to the <span className="text-transparent bg-clip-text bg-hackutd-gradient">collection</span>
+        <div className="w-full animate-in slide-in-from-bottom-20 duration-1000 delay-500">
+            <div className="mb-4 flex items-center justify-between px-2">
+                <h2 className="text-sm font-bold uppercase tracking-widest text-white/50">
+                    just pushed
                 </h2>
-                <p className="text-sm text-gray-300 max-w-lg">
-                    found a typo? want to add a diagram? the site is open source and driven by PRs.
-                </p>
-                <a
-                href="https://github.com/acmutd/acm-guides"
-                className="mt-2 inline-flex items-center gap-2 rounded-lg border border-primary/50 bg-gray-300/10 px-6 py-2 text-sm font-bold hover:bg-white/10 transition-colors"
-                >
-                GitHub Repo
-                </a>
+                <Link to="/docs/workshops" className="text-xs font-bold text-pink-400 hover:text-pink-300">
+                    view all →
+                </Link>
+            </div>
+
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide mask-linear-fade">
+                {recent.map((w, i) => (
+                    <MiniWorkshopCard
+                        key={w.slug}
+                        to={`/docs/${w.slug}`}
+                        title={w.meta.title}
+                        badge={i === 0 ? "New" : undefined}
+                    />
+                ))}
             </div>
         </div>
 
