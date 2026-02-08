@@ -1,0 +1,127 @@
+'use client';
+import React, { useEffect, useState } from 'react';
+import { peechi, orb1, orb2, orb3, orb4, orb5, orb6, orb7 } from './data';
+
+const multipliers: { [key: string]: number } = {
+  peechi: 0.05,
+  orb1: 0.1,
+  orb2: 0.07,
+  orb3: 0.1,
+  orb4: 0.08,
+  orb5: 0.06,
+  orb6: 0.09,
+  orb7: 0.08,
+  orb8: 0.07,
+};
+
+const ParallaxImages: React.FC = () => {
+  const [transition, setTransition] = useState(false);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const { width, height } = document.documentElement.getBoundingClientRect();
+      const offX = e.clientX - width * 0.5;
+      const offY = e.clientY - height * 0.1;
+
+      const layers = document.querySelectorAll('.img');
+      layers.forEach((layer) => {
+        const imgClass = (layer as HTMLElement).classList[1]; // Assuming the class name is the image identifier
+        const multiplier = multipliers[imgClass] || 0.02; // Default multiplier if not found
+
+        const x = offX * -multiplier; // Adjust multiplier for desired effect
+        const y = offY * -multiplier * 1.5; // Adjust multiplier for desired effect
+        (layer as HTMLElement).style.transform = `translateX(${x}px) translateY(${y}px)`;
+      });
+
+      if (transition) {
+        // Set transition state to false when mouse is moving
+        setTransition(false);
+      }
+    };
+
+    const handleMouseLeave = () => {
+      setTransition(true); // Start transition when mouse leaves
+      const layers = document.querySelectorAll('.img');
+      layers.forEach((layer) => {
+        (layer as HTMLElement).style.transform = `translateX(0) translateY(0)`;
+      });
+    };
+
+    const handleMouseEnter = () => {
+      setTransition(false); // Stop transition when mouse enters
+    };
+
+    document.body.addEventListener('mousemove', handleMouseMove);
+    document.body.addEventListener('mouseleave', handleMouseLeave);
+    document.body.addEventListener('mouseenter', handleMouseEnter);
+
+    return () => {
+      document.body.removeEventListener('mousemove', handleMouseMove);
+      document.body.removeEventListener('mouseleave', handleMouseLeave);
+      document.body.removeEventListener('mouseenter', handleMouseEnter);
+    };
+  }, [transition]);
+
+  return (
+    <>
+      <img
+        className={`img peechi absolute z-20 h-auto w-32 sm:w-48 lg:w-64 transition-transform duration-1000 ease-out md:opacity-100 right-[0.5%] top-[9rem] lg:right-[10%] lg:top-[6rem]`}
+        src={peechi}
+        alt="image"
+      />
+      <img
+        className={`img orb1 absolute left-[10vw] z-0 transition-transform duration-1000 ease-out hidden md:block`}
+        src={orb1}
+        alt="image"
+      />
+      <img
+        className={`img orb2 absolute right-[8vw] top-[15rem] z-0 transition-transform duration-1000 ease-out`}
+        src={orb2}
+        alt="image"
+      />
+      <img
+        className={`img orb3 absolute left-[5vw] top-[25rem] z-0 transition-transform duration-1000 ease-out`}
+        src={orb3}
+        alt="image"
+      />
+      <img
+        className={`img orb4 absolute right-[25vw] top-[10rem] z-0 transition-transform duration-1000 ease-out hidden lg:block`}
+        src={orb4}
+        alt="image"
+      />
+      <img
+        className={`img orb5 z-0 absolute left-[75vw] top-[36rem] transition-transform duration-1000 ease-out hidden md:block`}
+        src={orb5}
+        alt="image"
+      />
+      <img
+        className={`img orb6 absolute right-[25vw] top-[28rem] z-0 transition-transform duration-1000 ease-out hidden lg:block`}
+        src={orb6}
+        alt="image"
+      />
+      <img
+        className={`img orb7 absolute left-[-5vw] top-[10rem] z-0 transition-transform duration-1000 ease-out`}
+        src={orb7}
+        alt="image"
+      />
+      <img
+        className={`img orb8 absolute right-[-2vw] top-[20rem] z-0 transition-transform duration-1000 ease-out hidden sm:block`}
+        src={orb2}
+        alt="image"
+      />
+      <img
+        className={`img orb8 absolute right-[-7vw] top-[40rem] z-0 transition-transform duration-1000 ease-out hidden md:block`}
+        src={orb4}
+        alt="image"
+      />
+
+      <div className="absolute left-[12vw] top-[15rem] h-80 w-80 rounded-full bg-[#8135DA] opacity-20 blur-[7rem]"></div>
+      <div className="absolute right-[12vw] top-[10rem] h-64 w-64 rounded-full bg-[#3ADAB0] opacity-20 blur-[7rem]"></div>
+      <div className="absolute right-[30vw] top-[8rem] h-48 w-48 rounded-full bg-[#FF0052] opacity-20 blur-[6rem] hidden md:block"></div>
+      <div className="absolute left-[30vw] top-[30rem] h-72 w-72 rounded-full bg-[#E39E34] opacity-25 blur-[7rem] hidden sm:block"></div>
+      <div className="absolute left-[70vw] top-[18rem] h-56 w-56 rounded-full bg-[#8135DA] opacity-20 blur-[6rem] hidden lg:block"></div>
+    </>
+  );
+};
+
+export default ParallaxImages;
