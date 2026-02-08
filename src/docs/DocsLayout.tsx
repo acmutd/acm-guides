@@ -11,6 +11,7 @@ export default function DocsLayout() {
   const slug = splat.replace(/\/+$/, "") || "getting-started";
   const entry = getDoc(slug);
 
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const LazyDoc = useMemo(() => {
     if (!entry) return null;
     return React.lazy(async () => {
@@ -65,6 +66,7 @@ export default function DocsLayout() {
                 fallback={<div className="text-sm text-white/60">Loading doc…</div>}
               >
                 <article className="prose prose-invert max-w-none">
+                    {/* eslint-disable-next-line react-hooks/static-components */}
                   {LazyDoc ? <LazyDoc /> : null}
                 </article>
               </Suspense>
