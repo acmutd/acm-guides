@@ -89,22 +89,25 @@ export default function Home() {
   const recent = getRecentWorkshops(6);
 
   return (
-    // Main container mirroring the background style of the provided snippet
-    <main className="relative flex h-fit flex-col bg-[url(/assets/apply/apply-bg.png)] bg-cover text-white font-sans">
+    // Added overflow-x-hidden to prevent horizontal scrolling
+    <main className="relative flex min-h-screen flex-col overflow-x-hidden bg-[url(/assets/apply/apply-bg.png)] bg-cover text-white font-sans">
 
-      {/* Keeping Parallax as requested in previous turns, but it sits behind */}
-      <ParallaxImages />
+      {/* Parallax Container */}
+      <div className="absolute inset-0 z-0">
+         <ParallaxImages />
+      </div>
 
-      {/* Hero Section - Exact Styling Replica */}
-      <div className="relative flex min-h-screen flex-col items-center justify-center px-6 sm:px-12 md:px-16 lg:px-24">
-        <div className="flex flex-col items-center justify-center">
-          <div className="z-10 flex w-full max-w-7xl flex-col gap-y-8">
+      {/* Hero Section */}
+      {/* Changed justify-center to justify-start and added pt-32/pt-48 to move it up */}
+      <div className="relative z-10 flex min-h-screen flex-col items-center justify-start pt-32 sm:pt-40 md:pt-48 px-6 sm:px-12 md:px-16 lg:px-24">
+        <div className="flex flex-col items-center justify-center w-full">
+          <div className="flex w-full max-w-7xl flex-col gap-y-8">
 
             {/* The Main Hero Glass Container */}
             <div
-              className={`background-container z-10 flex w-full flex-col items-center gap-y-4 rounded-3xl border border-primary/50 bg-gray-600/10 px-6 py-8 backdrop-blur-xl sm:px-12 sm:py-10 md:z-0 md:px-16 md:py-14 lg:px-24`}
+              className={`background-container flex w-full flex-col items-center gap-y-4 rounded-3xl border border-primary/50 bg-gray-600/10 px-6 py-8 backdrop-blur-xl sm:px-12 sm:py-10 md:px-16 md:py-14 lg:px-24`}
             >
-              {/* Top Tag - "Powered by..." */}
+              {/* Top Tag */}
               <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 mb-2">
                  <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
@@ -115,19 +118,19 @@ export default function Home() {
                  </span>
               </div>
 
-              {/* Title - Matching the size and weight of the snippet */}
+              {/* Title */}
               <h1 className="text-center text-3xl font-bold sm:text-4xl md:text-5xl lg:text-7xl lowercase">
                 acm utd <GradientText>guides</GradientText>
               </h1>
 
-              {/* Description - Matching the font sizes */}
+              {/* Description */}
               <p className="md:text-md text-center text-base sm:text-lg lg:text-xl text-gray-200">
                 we&apos;re a team of students with one goal: building a greater, more collaborative
                 computing community. this is our knowledge base.
               </p>
 
-              {/* Action Buttons - Wrapped in the specific style container from the snippet */}
-              <div className="z-10 flex w-fit flex-row items-center justify-center gap-x-4 rounded-lg border border-primary/50 bg-gray-300/10 bg-acm-gradient px-4 py-3 sm:gap-x-6 sm:px-6 sm:py-4 md:px-8 mt-4">
+              {/* Action Buttons */}
+              <div className="flex w-fit flex-row items-center justify-center gap-x-4 rounded-lg border border-primary/50 bg-gray-300/10 bg-acm-gradient px-4 py-3 sm:gap-x-6 sm:px-6 sm:py-4 md:px-8 mt-4">
                 <Link
                   to="/docs/getting-started"
                   className="text-sm font-bold text-white hover:text-white/80 transition-colors"
@@ -147,14 +150,14 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 transform animate-bounce">
+        {/* Scroll Indicator - Pushed to absolute bottom of the screen view */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 transform animate-bounce">
           <svg className="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
         </div>
       </div>
 
-      {/* Content Section - Why Join / Workshops */}
-      <div className="py-10 sm:py-16 md:py-20 lg:py-24 px-6 sm:px-12 md:px-16 lg:px-24 max-w-7xl mx-auto w-full">
+      {/* Content Section */}
+      <div className="relative z-10 py-10 sm:py-16 md:py-20 lg:py-24 px-6 sm:px-12 md:px-16 lg:px-24 max-w-7xl mx-auto w-full">
 
         <div className="flex items-end justify-between mb-8">
             <div>
