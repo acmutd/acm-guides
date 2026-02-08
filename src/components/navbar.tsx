@@ -6,8 +6,7 @@ import {Bars3Icon, XMarkIcon} from "@heroicons/react/24/outline";
 
 const links = [
     {name: "home", to: "/"},
-    {name: "getting started", to: "/docs/getting-started"},
-    {name: "all modules", to: "/docs/workshops"},
+    {name: "all docs", to: "/docs/workshops"},
 ];
 
 function navLinkClass(isActive: boolean) {

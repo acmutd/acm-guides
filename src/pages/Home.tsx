@@ -102,17 +102,10 @@ export default function Home() {
                         <div
                             className="mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
                             <Link
-                                to="/docs/getting-started"
+                                to="/docs/workshops"
                                 className="w-full sm:w-auto text-center rounded-full bg-white text-black px-8 py-3 text-sm font-black uppercase tracking-wide hover:bg-zinc-200 hover:scale-105 transition-all shadow-[0_0_30px_rgba(255,255,255,0.3)]"
                             >
                                 Start Learning
-                            </Link>
-
-                            <Link
-                                to="/docs/workshops"
-                                className="w-full sm:w-auto text-center rounded-full border border-white/20 bg-black/40 px-8 py-3 text-sm font-bold uppercase tracking-wide text-white hover:bg-white/10 hover:border-white/40 transition-all backdrop-blur-sm"
-                            >
-                                All Docs
                             </Link>
                         </div>
 
