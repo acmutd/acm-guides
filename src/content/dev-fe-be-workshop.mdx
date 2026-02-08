@@ -1,0 +1,166 @@
+export const meta = {
+  title: "Frontend-Backend Workshop",
+  description: "AMC Development",
+  updated: "2026-02-08",
+};
+
+***
+
+# 🚀 ACM Workshop: Full Stack with React + FastAPI
+
+Welcome! In this 1-hour code-along, we will build a modern dashboard by connecting a **React** frontend to a **Python FastAPI** backend.
+
+**What you’ll learn:**
+*   **The Stack:** How React fetches JSON data from a Python API.
+*   **The Setup:** How to run two development servers simultaneously.
+*   **The Contract:** How changing backend data structures updates the UI.
+
+***
+
+## 📂 1. Project Structure
+We are building a **monorepo**. The React app lives at the root, and the Python API lives in its own folder.
+
+```text
+├── api/                 # 🐍 FastAPI backend
+│   ├── main.py          # The API endpoints
+│   └── requirements.txt # Python dependencies
+├── src/                 # ⚛️ React source code
+├── index.html           # Entry point
+├── vite.config.js       # Vite configuration (Proxy setup)
+├── package.json         # Node dependencies
+└── README.md
+```
+
+***
+
+## 🛠 2. Prerequisites
+Before we start, ensure you have the following installed.
+
+| Tool        | Verification Command | Download Link                                              |
+|:------------|:---------------------|:-----------------------------------------------------------|
+| **Git**     | `git --version`      | [Download Git](https://git-scm.com/install/)               |
+| **Node.js** | `node -v`            | [Download Node (LTS)](https://nodejs.org/en/download)      |
+| **Python**  | `python --version`   | [Download Python](https://www.python.org/downloads/)       |
+| **VS Code** | N/A                  | [Download VS Code](https://code.visualstudio.com/download) |
+
+> **VS Code Extension:** We highly recommend the **Python** extension by Microsoft (`ms-python.python`) for intellisense and debugging.
+
+***
+
+## ⚡ 3. Quick Start
+
+### Step 1: Clone the Repo
+Open your terminal (Command Prompt, PowerShell, or Terminal).
+```bash
+git clone <YOUR_REPO_URL>
+cd acm-fe-be-workshop
+```
+
+### Step 2: Frontend Install
+Install the JavaScript dependencies in the root folder.
+```bash
+npm install
+```
+
+### Step 3: Backend Install
+We need to set up a Python Virtual Environment (`venv`) so we don't mess up your global Python settings.
+
+**1. Navigate to the API folder:**
+```bash
+cd api
+```
+
+**2. Create the virtual environment:**
+```bash
+python -m venv .venv
+```
+
+**3. Activate the environment:**
+
+| Platform          | Command                        |
+|:------------------|:-------------------------------|
+| **Windows**       | `.\.venv\Scripts\Activate.ps1` |
+| **macOS / Linux** | `source .venv/bin/activate`    |
+
+*(You should see `(.venv)` appear in your terminal prompt).*
+
+**4. Install Python packages:**
+```bash
+pip install -r requirements.txt
+cd ..
+```
+
+***
+
+## 🖥 4. Running the App
+Since this is full stack, we need **two terminal tabs** running at the same time.
+
+### 🐍 Terminal 1: Backend (FastAPI)
+Navigate to the `api` folder and start the server.
+```bash
+cd api
+uvicorn main:app --reload --port 8000
+```
+*   **API JSON:** [http://localhost:8000/api/status](http://localhost:8000/api/status)
+*   **Swagger Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
+*   *Note: `--reload` ensures the server restarts automatically when you save changes.*
+
+### ⚛️ Terminal 2: Frontend (React)
+In the root folder, start the Vite server.
+```bash
+npm run dev
+```
+*   **Dashboard:** [http://localhost:5173](http://localhost:5173)
+
+***
+
+## 📝 5. Workshop Tasks
+
+### Task 0: The "Contract"
+Open [http://localhost:8000/api/status](http://localhost:8000/api/status) in your browser.
+*   This JSON is the "Source of Truth."
+*   Our React app is programmed to display whatever this endpoint returns.
+
+### Task 1: Update the Backend
+**File:** `api/main.py`
+1.  Find the `widgets` list in the code.
+2.  Add a new dictionary item to the list (e.g., a "Server Status" or "Weather" widget).
+3.  **Save** the file.
+4.  Refresh your **Frontend** (localhost:5173). You should see the new card appear automatically!
+
+### Task 2: Enhance the Frontend
+**File:** `src/App.jsx`
+Currently, the app might crash if the API is slow. Let's make it robust:
+1.  **Add Loading State:** create a `isLoading` state variable. Show a "Loading..." spinner while fetching.
+2.  **Add Error Handling:** Wrap the fetch in a `try/catch` block. If the API fails, show an error message.
+3.  **Add Refresh Button:** Create a `<button>` that re-runs the `fetch` function on click.
+
+### Task 3: Make it Yours
+**File:** `src/config.js` (or similar)
+Time to customize the dashboard!
+*   Change the dashboard title.
+*   Update the theme/accent colors (Tailwind classes).
+*   Reorder the widgets or hide the ones you don't want.
+
+***
+
+## 🐛 Troubleshooting
+
+### "python not found" or "pip not recognized"
+If you are on Windows, try using `py` instead of `python`.
+```bash
+py -m venv .venv
+```
+On Mac/Linux, try `python3`.
+
+### "Port 8000 already in use"
+If another process is using port 8000, start uvicorn on a different port:
+```bash
+uvicorn main:app --reload --port 8001
+```
+> **Important:** If you do this, you must update `vite.config.js` to proxy requests to port `8001` instead of `8000`.
+
+### Frontend says "Network Error" or 404
+1.  Ensure the backend terminal is actually running.
+2.  Check `vite.config.js` to ensure the `proxy` is set up correctly.
+3.  If you aren't using a proxy, you may need to enable **CORS** in `main.py`.

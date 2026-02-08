@@ -94,7 +94,7 @@ export default function Home() {
                         <p className="mt-6 max-w-xl text-center text-xl text-zinc-300 font-medium leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
                             ACM's premier documentation site. <br/>
                             built by <span
-                            className="text-white decoration-pink-500 underline underline-offset-4">students</span>,
+                            className="text-white decoration-purple-500 underline underline-offset-4">students</span>,
                             for <span
                             className="text-white decoration-blue-500 underline underline-offset-4">students</span>.
                         </p>
@@ -117,7 +117,7 @@ export default function Home() {
                         <h2 className="text-sm font-bold uppercase tracking-widest text-white/50">
                             just pushed
                         </h2>
-                        <Link to="/docs/workshops" className="text-xs font-bold text-pink-400 hover:text-pink-300">
+                        <Link to="/docs/workshops" className="text-xs font-bold text-white hover:text-pink-300">
                             view all →
                         </Link>
                     </div>
