@@ -221,7 +221,7 @@ function DocsContent() {
               to="/docs"
               className="text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-zinc-900 dark:text-white/40 dark:hover:text-white transition-colors"
             >
-              Docs Home
+              Home
             </Link>
           </div>
 

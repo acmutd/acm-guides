@@ -1,4 +1,15 @@
-export type DocMeta = { title?: string; description?: string };
+export type DocNode = {
+  type: "doc";
+  title: string;
+  slug: string;
+  description?: string;
+};
+
+export type CategoryNode = {
+  type: "category";
+  name: string;
+  items: (DocNode | CategoryNode)[];
+};
 
 export type DocEntry = {
   slug: string;
@@ -6,11 +17,13 @@ export type DocEntry = {
   load: () => Promise<never>;
 };
 
-const modules = import.meta.glob("../content/**/*.mdx"); // lazy component
+const modules = import.meta.glob("../content/**/*.mdx");
+
+type MdxMeta = { title?: string; description?: string };
 const metas = import.meta.glob("../content/**/*.mdx", {
   eager: true,
   import: "meta",
-}) as Record<string, DocMeta | undefined>; // eager named export only [page:1]
+}) as Record<string, MdxMeta | undefined>; // Vite glob named import [page:3]
 
 function getSlug(path: string) {
   return path.replace(/^\.\.\/content\//, "").replace(/\.mdx$/, "");
@@ -25,7 +38,6 @@ function formatTitle(raw: string) {
 }
 
 export const ALL_DOCS: DocEntry[] = [];
-// @ts-expect-error lame
 export const SIDEBAR_TREE: (DocNode | CategoryNode)[] = [];
 
 for (const path in modules) {
@@ -34,7 +46,7 @@ for (const path in modules) {
   const filename = parts.pop()!;
 
   const fm = metas[path];
-  
+
   const entry: DocEntry = {
     slug,
     meta: {
@@ -50,11 +62,14 @@ for (const path in modules) {
   parts.forEach((folder) => {
     let existingFolder = currentLevel.find(
       (n) => n.type === "category" && n.name === formatTitle(folder)
-    // @ts-expect-error not a clue
     ) as CategoryNode;
 
     if (!existingFolder) {
-      existingFolder = { type: "category", name: formatTitle(folder), items: [] };
+      existingFolder = {
+        type: "category",
+        name: formatTitle(folder),
+        items: [],
+      };
       currentLevel.push(existingFolder);
     }
     currentLevel = existingFolder.items;
@@ -69,4 +84,19 @@ for (const path in modules) {
 }
 
 ALL_DOCS.sort((a, b) => a.slug.localeCompare(b.slug));
+
+export function getDoc(slug: string) {
+  return ALL_DOCS.find((d) => d.slug === slug);
+}
+
+export function getRecentWorkshops() {
+  let workshops = ALL_DOCS.filter((doc) =>
+    doc.slug.toLowerCase().includes("workshop")
+  );
+
+  if (workshops.length === 0) workshops = ALL_DOCS;
+
+  return workshops.slice(0, 3);
+}
+
 export const DOCS = ALL_DOCS;
