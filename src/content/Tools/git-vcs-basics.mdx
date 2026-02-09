@@ -41,3 +41,139 @@ Before we start, verify if you already have Git installed.
 **Verification Command:**
 ```bash
 git --version
+```
+
+*If you see a version number (e.g., `git version 2.40.0`), you are good to go! If not, follow the steps below.*
+
+### 🪟 Windows
+
+1. **Download:** Go to [git-scm.com/download/win](https://git-scm.com/download/win).
+2. **Run Installer:** Download the "Standalone Installer" (64-bit).
+3. **The Setup Wizard:**
+* Keep hitting "Next" through the defaults.
+* *Critical:* When asked about the default editor, select **Visual Studio Code**.
+* *Critical:* Ensure "Git from the command line and also from 3rd-party software" is selected.
+
+
+
+### 🍎 macOS
+
+You have two easy options.
+
+**Option A: Xcode Command Line Tools (Easiest)**
+Open your terminal and type:
+
+```bash
+git --version
+```
+
+If not installed, macOS will prompt you to install the Xcode Command Line Tools. Click "Install."
+
+**Option B: Homebrew (Preferred)**
+If you have [Homebrew](https://brew.sh/) installed:
+
+```bash
+brew install git
+```
+
+---
+
+## ⚙️ 3. First-Time Configuration
+
+Once installed, you must introduce yourself to Git. This information will appear next to every change you make.
+
+Open your terminal and run these two commands:
+
+```bash
+# 1. Set your username (Use your GitHub username or real name)
+git config --global user.name "Your Name"
+
+# 2. Set your email (Must match your GitHub email!)
+git config --global user.email "you@example.com"
+```
+
+**Verify your config:**
+
+```bash
+git config --list
+```
+
+---
+
+## ⚡ 4. Essential Commands
+
+These are the commands you will use 99% of the time.
+
+### Starting Out
+
+| Action    | Command           | Description                                           |
+|-----------|-------------------|-------------------------------------------------------|
+| **Clone** | `git clone <URL>` | Download an existing repo from GitHub to your laptop. |
+| **Init**  | `git init`        | Turn your current folder into a brand new Git repo.   |
+
+### The "Save" Cycle
+
+Every time you finish a task, follow this 3-step rhythm:
+
+**1. Add (Stage)**
+Move changes to the staging area.
+
+```bash
+git add .
+```
+
+*(The `.` means "add all changed files". You can also specify a filename).*
+
+**2. Commit (Save)**
+Take a snapshot of the staged files.
+
+```bash
+git commit -m "Fixed the login bug"
+```
+
+*(Always write a clear message describing what you changed).*
+
+**3. Push (Upload)**
+Send your commits to the cloud (GitHub).
+
+```bash
+git push
+```
+
+### Checking In
+
+**Status (The MVP)**
+Run this constantly. It tells you what files are changed, staged, or untracked.
+
+```bash
+git status
+```
+
+**Log**
+See the history of commits (the timeline).
+
+```bash
+git log --oneline
+```
+
+---
+
+## 🐛 Troubleshooting
+
+### "fatal: not a git repository"
+
+You are trying to run a git command inside a folder that isn't tracked.
+
+* **Fix:** `cd` into the correct folder where you ran `git init` or `git clone`.
+
+### "Permission denied (publickey)"
+
+GitHub doesn't recognize your computer.
+
+* **Fix:** You likely need to set up an SSH key or use a Personal Access Token. For beginners, try cloning using the **HTTPS** URL instead of the **SSH** URL.
+
+### "Merge conflict"
+
+Two people changed the same line of code. Git doesn't know whose version to keep.
+
+* **Fix:** Open the file in VS Code. You will see highlighted sections showing "Current Change" vs "Incoming Change". Choose one, save the file, then `git add .` and `git commit` again.
