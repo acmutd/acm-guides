@@ -1,12 +1,77 @@
 import React, {Suspense, useMemo, useState, useEffect} from "react";
-import {NavLink, Link, useParams} from "react-router-dom";
-import {DOCS, getDoc} from "./registry";
+import {NavLink, Link, useParams, useLocation} from "react-router-dom";
+import {Disclosure, Transition} from "@headlessui/react";
+import {ChevronRightIcon} from "@heroicons/react/20/solid";
+import {ALL_DOCS, SIDEBAR_TREE, getDoc, type DocNode, type CategoryNode} from "./registry";
 import {ThemeProvider} from "../ThemeContext";
 import Navbar from "../components/navbar.tsx";
 import DocsIndex from "./DocIndex";
 
 function classNames(...xs: Array<string | false | undefined>) {
     return xs.filter(Boolean).join(" ");
+}
+
+function SidebarItem({node, depth = 0}: { node: DocNode | CategoryNode; depth?: number }) {
+    const location = useLocation();
+
+    if (node.type === "doc") {
+        return (
+            <NavLink
+                to={`/docs/${node.slug}`}
+                className={({isActive}) =>
+                    classNames(
+                        "block rounded-lg py-2 text-sm transition-colors duration-200 border-l-2 pl-4 -ml-px",
+                        isActive
+                            ? "border-orange-500 font-medium text-orange-600 bg-orange-50/50 dark:bg-orange-500/10 dark:text-orange-400"
+                            : "border-transparent text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:border-zinc-700"
+                    )
+                }
+                style={{marginLeft: depth * 12}}
+            >
+                {node.title}
+            </NavLink>
+        );
+    }
+
+    const isChildActive = JSON.stringify(node).includes(location.pathname.replace("/docs/", ""));
+
+    return (
+        <Disclosure defaultOpen={isChildActive || depth === 0}>
+            {({open}) => (
+                <>
+                    <Disclosure.Button
+                        className={classNames(
+                            "flex w-full items-center justify-between py-2 text-left text-sm font-bold uppercase tracking-wider text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200",
+                            open ? "text-zinc-900 dark:text-zinc-200" : ""
+                        )}
+                        style={{paddingLeft: depth * 12}}
+                    >
+                        <span>{node.name}</span>
+                        <ChevronRightIcon
+                            className={classNames(
+                                "h-4 w-4 text-zinc-400 transition-transform duration-200",
+                                open ? "rotate-90" : ""
+                            )}
+                        />
+                    </Disclosure.Button>
+                    <Transition
+                        enter="transition duration-100 ease-out"
+                        enterFrom="transform scale-95 opacity-0"
+                        enterTo="transform scale-100 opacity-100"
+                        leave="transition duration-75 ease-out"
+                        leaveFrom="transform scale-100 opacity-100"
+                        leaveTo="transform scale-95 opacity-0"
+                    >
+                        <Disclosure.Panel className="space-y-1 mt-1">
+                            {node.items.map((child, i) => (
+                                <SidebarItem key={i} node={child} depth={depth + 1}/>
+                            ))}
+                        </Disclosure.Panel>
+                    </Transition>
+                </>
+            )}
+        </Disclosure>
+    );
 }
 
 function useHeadings() {
@@ -52,7 +117,7 @@ function DocsContent() {
     const splat = params["*"] ?? "";
 
     const isIndex = splat === "" || splat === "workshops";
-    const slug = splat.replace(/\/+$/, "") || "getting-started";
+    const slug = splat.replace(/\/+$/, "");
 
     const entry = isIndex ? null : getDoc(slug);
 
@@ -60,11 +125,11 @@ function DocsContent() {
 
     const {prev, next} = useMemo(() => {
         if (isIndex) return {prev: null, next: null};
-        const idx = DOCS.findIndex((d) => d.slug === slug);
+        const idx = ALL_DOCS.findIndex((d) => d.slug === slug);
         if (idx === -1) return {prev: null, next: null};
         return {
-            prev: DOCS[idx - 1] ?? null,
-            next: DOCS[idx + 1] ?? null,
+            prev: ALL_DOCS[idx - 1] ?? null,
+            next: ALL_DOCS[idx + 1] ?? null,
         };
     }, [slug, isIndex]);
 
@@ -73,6 +138,7 @@ function DocsContent() {
         if (!entry) return null;
         return React.lazy(async () => {
             const mod = await entry.load();
+            // @ts-expect-error not a clue
             return {default: mod.default};
         });
     }, [entry?.slug]);
@@ -88,25 +154,16 @@ function DocsContent() {
             <div className="pt-20 flex">
                 <aside
                     className="fixed inset-y-0 top-20 left-0 z-30 hidden w-[280px] overflow-y-auto border-r border-zinc-200 bg-white/50 px-6 py-8 pb-20 backdrop-blur-xl dark:border-white/10 dark:bg-black/50 lg:block">
-                    <div className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-white/40 mb-4">
-                        Guides
+                    <div className="mb-6">
+                        <Link to="/docs"
+                              className="text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-orange-500 dark:text-white/40">
+                            Home
+                        </Link>
                     </div>
+
                     <nav className="space-y-1">
-                        {DOCS.map((d) => (
-                            <NavLink
-                                key={d.slug}
-                                to={`/docs/${d.slug}`}
-                                className={({isActive}) =>
-                                    classNames(
-                                        "block rounded-lg px-3 py-2 text-sm transition-colors",
-                                        isActive
-                                            ? "bg-zinc-100 text-zinc-900 font-bold dark:bg-white/10 dark:text-orange-400"
-                                            : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-zinc-200"
-                                    )
-                                }
-                            >
-                                {d.meta.title}
-                            </NavLink>
+                        {SIDEBAR_TREE.map((node, i) => (
+                            <SidebarItem key={i} node={node}/>
                         ))}
                     </nav>
                 </aside>
@@ -127,32 +184,16 @@ function DocsContent() {
                                             <p className="text-lg text-zinc-600 dark:text-zinc-400">
                                                 The page "{slug}" does not exist.
                                             </p>
-                                            <div
-                                                className="mt-8 w-full rounded-2xl border border-zinc-200 bg-zinc-50 p-6 dark:border-white/10 dark:bg-white/5">
-                                                <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                                                    Available Guides
-                                                </h3>
-                                                <div className="grid gap-2 sm:grid-cols-2">
-                                                    {DOCS.map((d) => (
-                                                        <Link
-                                                            key={d.slug}
-                                                            to={`/docs/${d.slug}`}
-                                                            className="block rounded-lg border border-zinc-200 bg-white p-4 transition hover:border-orange-500/50 dark:border-white/10 dark:bg-black"
-                                                        >
-                                                            <div
-                                                                className="font-semibold text-zinc-900 dark:text-zinc-200">
-                                                                {d.meta.title}
-                                                            </div>
-                                                        </Link>
-                                                    ))}
-                                                </div>
-                                            </div>
+                                            <Link to="/docs" className="text-orange-600 hover:underline">
+                                                Return to all docs
+                                            </Link>
                                         </div>
                                     </div>
                                 ) : (
                                     <>
                                         <div className="mb-6 flex items-center gap-2 text-sm text-zinc-500">
-                                            <span>Docs</span>
+                                            <Link to="/docs"
+                                                  className="hover:text-zinc-900 dark:hover:text-white">Docs</Link>
                                             <span className="text-zinc-300 dark:text-zinc-700">/</span>
                                             <span className="font-medium text-zinc-900 dark:text-zinc-200">
                         {entry.meta.title}
@@ -163,23 +204,13 @@ function DocsContent() {
                                             className="h-96 animate-pulse bg-zinc-100 dark:bg-white/5 rounded-2xl"/>}>
                                             <article className="prose prose-zinc max-w-none
                         dark:prose-invert
-
-                        {/* LINKS */}
-                        prose-a:text-orange-500 dark:prose-a:text-orange-400
-
-                        {/* CODE BLOCKS */}
+                        prose-a:text-orange-600 dark:prose-a:text-orange-400
                         prose-pre:bg-zinc-900 prose-pre:text-zinc-100 prose-pre:border prose-pre:border-zinc-700
                         dark:prose-pre:bg-white/5 dark:prose-pre:border-white/10 dark:prose-pre:text-zinc-100
-
-                        {/* INLINE CODE */}
-                        prose-code:text-orange-400 prose-code:bg-zinc-500/10 prose-code:px-1 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
+                        prose-code:text-orange-600 prose-code:bg-orange-50 prose-code:px-1 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
                         dark:prose-code:text-orange-400 dark:prose-code:bg-white/10
-
-                        {/* FIX: Remove bg from code inside pre blocks */}
                         [&_pre_code]:bg-transparent [&_pre_code]:p-0
                         dark:[&_pre_code]:bg-transparent
-
-                        {/* TABLE STYLES */}
                         prose-table:w-full prose-table:border-collapse
                         prose-thead:border-b prose-thead:border-zinc-200 dark:prose-thead:border-white/10
                         prose-tr:border-b prose-tr:border-zinc-200 dark:prose-tr:border-white/10

@@ -54,7 +54,7 @@ function MiniWorkshopCard({
 }
 
 export default function Home() {
-    const recent = getRecentWorkshops(6);
+    const recent = getRecentWorkshops();
 
     return (
         <main

@@ -1,63 +1,88 @@
-export type DocMeta = {
-  title: string;
-  description?: string;
-  updated?: string;
-  order?: number;
+export type DocNode = {
+    type: "doc";
+    title: string;
+    slug: string;
+    description?: string;
 };
 
-type DocEntry = {
-  slug: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  load: () => Promise<any>;
-  meta: DocMeta;
+export type CategoryNode = {
+    type: "category";
+    name: string;
+    items: (DocNode | CategoryNode)[];
 };
 
-const pageModules = import.meta.glob("../content/**/*.mdx");
+export type DocEntry = {
+    slug: string;
+    meta: { title: string; description?: string };
+    load: () => Promise<never>;
+};
 
-const metaModules = import.meta.glob("../content/**/*.mdx", {
-  eager: true,
-  import: "meta",
-}) as Record<string, DocMeta>;
+const modules = import.meta.glob("../content/**/*.mdx");
 
-function pathToSlug(path: string) {
-  return path
-    .replace("../content/", "")
-    .replace(/\.mdx$/, "")
-    .replace(/\/index$/, "");
+function getSlug(path: string) {
+    return path
+        .replace(/^\.\.\/content\//, "")
+        .replace(/\.mdx$/, "");
 }
 
-function slugToTitleFallback(slug: string) {
-  const last = slug.split("/").pop() || slug;
-  return last
-    .replace(/[-_]/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+function formatTitle(raw: string) {
+    return raw
+        .split("-")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
 }
 
-export const DOCS: DocEntry[] = Object.keys(pageModules)
-  .map((path) => {
-    const slug = pathToSlug(path);
-    const meta = metaModules[path] ?? { title: slugToTitleFallback(slug) };
-    return { slug, load: pageModules[path], meta };
-  })
-  .sort((a, b) => {
-    const ao = a.meta.order ?? 1e9;
-    const bo = b.meta.order ?? 1e9;
-    if (ao !== bo) return ao - bo;
-    return a.slug.localeCompare(b.slug);
-  });
+export const ALL_DOCS: DocEntry[] = [];
+export const SIDEBAR_TREE: (DocNode | CategoryNode)[] = [];
+
+for (const path in modules) {
+    const slug = getSlug(path);
+    const parts = slug.split("/");
+    const filename = parts.pop()!;
+
+    const entry: DocEntry = {
+        slug,
+        meta: {
+            title: formatTitle(filename),
+            description: "",
+        },
+        load: modules[path] as never,
+    };
+    ALL_DOCS.push(entry);
+
+    let currentLevel = SIDEBAR_TREE;
+    parts.forEach((folder) => {
+        let existingFolder = currentLevel.find(
+            (n) => n.type === "category" && n.name === formatTitle(folder)
+        ) as CategoryNode;
+
+        if (!existingFolder) {
+            existingFolder = {
+                type: "category",
+                name: formatTitle(folder),
+                items: [],
+            };
+            currentLevel.push(existingFolder);
+        }
+        currentLevel = existingFolder.items;
+    });
+
+    currentLevel.push({
+        type: "doc",
+        title: formatTitle(filename),
+        slug,
+    });
+}
 
 export function getDoc(slug: string) {
-  return DOCS.find((d) => d.slug === slug);
+    return ALL_DOCS.find((d) => d.slug === slug);
 }
 
-export function getRecentWorkshops(limit = 6) {
-  return DOCS
-    .filter((d) => d.slug.startsWith("workshops/"))
-    .slice()
-    .sort((a, b) => {
-      const ad = a.meta.updated ? Date.parse(a.meta.updated) : 0;
-      const bd = b.meta.updated ? Date.parse(b.meta.updated) : 0;
-      return bd - ad;
-    })
-    .slice(0, limit);
+export function getRecentWorkshops() {
+
+  const workshops = ALL_DOCS.filter(doc => doc.slug.includes("workshops"));
+
+  return workshops.slice(0, 3);
 }
+
+export const DOCS = ALL_DOCS;
