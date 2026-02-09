@@ -131,7 +131,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide mask-linear-fade">
+          <div className="flex gap-4 overflow-x-auto pb-4 pt-2 scrollbar-hide mask-linear-fade">
             {recent.map((w, i) => (
               <MiniWorkshopCard
                 key={w.slug}
