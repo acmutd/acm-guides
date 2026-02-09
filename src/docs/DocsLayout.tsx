@@ -20,11 +20,9 @@ function useHeadings() {
                 text: elem.textContent ?? "",
                 level: Number(elem.tagName.substring(1)),
             }));
-
             elements.forEach((elem) => {
                 if (!elem.id) elem.id = elem.innerHTML.toLowerCase().replace(/\s+/g, "-");
             });
-
             setHeadings(parsed);
         }, 150);
 
@@ -35,14 +33,11 @@ function useHeadings() {
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        setActiveId(entry.target.id);
-                    }
+                    if (entry.isIntersecting) setActiveId(entry.target.id);
                 });
             },
             {rootMargin: "0px 0px -80% 0px"}
         );
-
         const elements = document.querySelectorAll("article h2, article h3");
         elements.forEach((elem) => observer.observe(elem));
         return () => observer.disconnect();
@@ -81,15 +76,15 @@ function DocsContent() {
         <div
             className="min-h-screen bg-white text-zinc-900 transition-colors duration-300 dark:bg-black dark:text-white">
             <div
-                className="fixed top-0 inset-x-0 z-50 h-20 bg-white/80 backdrop-blur-xl border-b border-zinc-200 dark:bg-black/80 dark:border-white/10">
+                className="fixed top-0 inset-x-0 z-50 h-20 border-b border-zinc-200 bg-white/80 backdrop-blur-xl dark:bg-black/80 dark:border-white/10">
                 <Navbar/>
             </div>
 
             <div className="pt-20 flex">
                 <aside
                     className="fixed inset-y-0 top-20 left-0 z-30 hidden w-[280px] overflow-y-auto border-r border-zinc-200 bg-white/50 px-6 py-8 pb-20 backdrop-blur-xl dark:border-white/10 dark:bg-black/50 lg:block">
-                    <div className="text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-white/40 mb-4">
-                        Articles
+                    <div className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-white/40 mb-4">
+                        Documentation
                     </div>
                     <nav className="space-y-1">
                         {DOCS.map((d) => (
@@ -100,7 +95,7 @@ function DocsContent() {
                                     classNames(
                                         "block rounded-lg px-3 py-2 text-sm transition-colors",
                                         isActive
-                                            ? "bg-zinc-100 text-orange-600 font-medium dark:bg-white/10 dark:text-orange-400"
+                                            ? "bg-zinc-100 text-zinc-900 font-bold dark:bg-white/10 dark:text-orange-400"
                                             : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-zinc-200"
                                     )
                                 }
@@ -119,18 +114,14 @@ function DocsContent() {
                                 {!entry ? (
                                     <div className="py-12">
                                         <div className="flex flex-col items-start gap-4">
-                                            <h1 className="text-4xl font-bold text-zinc-900 dark:text-white">
-                                                Doc not found
-                                            </h1>
-                                            <p className="text-lg text-zinc-500">
-                                                The page "{slug}" does not exist.
-                                            </p>
-
+                                            <h1 className="text-4xl font-bold text-zinc-900 dark:text-white">Doc not
+                                                found</h1>
+                                            <p className="text-lg text-zinc-600 dark:text-zinc-400">The page "{slug}"
+                                                does not exist.</p>
                                             <div
-                                                className="mt-8 w-full rounded-2xl border border-zinc-200 bg-zinc-50/50 p-6 dark:border-white/10 dark:bg-white/5">
-                                                <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-zinc-400">
-                                                    Available Guides
-                                                </h3>
+                                                className="mt-8 w-full rounded-2xl border border-zinc-200 bg-zinc-50 p-6 dark:border-white/10 dark:bg-white/5">
+                                                <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Available
+                                                    Guides</h3>
                                                 <div className="grid gap-2 sm:grid-cols-2">
                                                     {DOCS.map((d) => (
                                                         <Link
@@ -140,8 +131,6 @@ function DocsContent() {
                                                         >
                                                             <div
                                                                 className="font-semibold text-zinc-900 dark:text-zinc-200">{d.meta.title}</div>
-                                                            <div
-                                                                className="text-xs text-zinc-500 line-clamp-1">{d.meta.description || "View documentation"}</div>
                                                         </Link>
                                                     ))}
                                                 </div>
@@ -153,15 +142,29 @@ function DocsContent() {
                                         <div className="mb-6 flex items-center gap-2 text-sm text-zinc-500">
                                             <span>Docs</span>
                                             <span className="text-zinc-300 dark:text-zinc-700">/</span>
-                                            <span className="font-medium text-zinc-900 dark:text-zinc-200">
-                        {entry.meta.title}
-                      </span>
+                                            <span
+                                                className="font-medium text-zinc-900 dark:text-zinc-200">{entry.meta.title}</span>
                                         </div>
 
                                         <Suspense fallback={<div
                                             className="h-96 animate-pulse bg-zinc-100 dark:bg-white/5 rounded-2xl"/>}>
-                                            <article
-                                                className="prose max-w-none dark:prose-invert prose-headings:scroll-mt-24 prose-headings:font-bold prose-h1:text-4xl prose-h2:text-2xl prose-a:text-orange-600 dark:prose-a:text-orange-400">
+                                            <article className="prose prose-zinc max-w-none
+                        dark:prose-invert
+
+                        // LINKS
+                        prose-a:text-orange-600 dark:prose-a:text-orange-400
+
+                        // CODE BLOCKS
+                        prose-pre:bg-zinc-900 prose-pre:text-zinc-100 prose-pre:border prose-pre:border-zinc-700
+                        dark:prose-pre:bg-white/5 dark:prose-pre:border-white/10 dark:prose-pre:text-zinc-100
+
+                        // INLINE CODE
+                        prose-code:text-orange-300 prose-code:bg-orange-50 prose-code:px-1 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
+                        dark:prose-code:text-orange-300 dark:prose-code:bg-white/10
+
+                        [&_pre_code]:bg-transparent [&_pre_code]:p-0
+                        dark:[&_pre_code]:bg-transparent
+                      ">
                                                 <h1 className="mb-4">{entry.meta.title}</h1>
                                                 {/* eslint-disable-next-line react-hooks/static-components */}
                                                 {LazyDoc ? <LazyDoc/> : null}
@@ -176,12 +179,10 @@ function DocsContent() {
                                                     to={`/docs/${prev.slug}`}
                                                     className="flex flex-col items-start gap-1 rounded-xl border border-zinc-200 p-6 transition hover:border-orange-500/50 hover:bg-zinc-50 dark:border-white/10 dark:hover:bg-white/5"
                                                 >
-                          <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">
-                            Previous
-                          </span>
-                                                    <span className="font-semibold text-zinc-900 dark:text-zinc-200">
-                            {prev.meta.title}
-                          </span>
+                                                    <span
+                                                        className="text-xs font-bold uppercase tracking-wider text-zinc-400">Previous</span>
+                                                    <span
+                                                        className="font-semibold text-zinc-900 dark:text-zinc-200">{prev.meta.title}</span>
                                                 </Link>
                                             ) : <div/>}
                                             {next ? (
@@ -189,12 +190,10 @@ function DocsContent() {
                                                     to={`/docs/${next.slug}`}
                                                     className="flex flex-col items-end gap-1 rounded-xl border border-zinc-200 p-6 transition hover:border-orange-500/50 hover:bg-zinc-50 dark:border-white/10 dark:hover:bg-white/5 text-right"
                                                 >
-                          <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">
-                            Next
-                          </span>
-                                                    <span className="font-semibold text-zinc-900 dark:text-zinc-200">
-                            {next.meta.title}
-                          </span>
+                                                    <span
+                                                        className="text-xs font-bold uppercase tracking-wider text-zinc-400">Next</span>
+                                                    <span
+                                                        className="font-semibold text-zinc-900 dark:text-zinc-200">{next.meta.title}</span>
                                                 </Link>
                                             ) : <div/>}
                                         </div>
@@ -207,8 +206,8 @@ function DocsContent() {
                                     <div
                                         className="sticky top-28 max-h-[calc(100vh-8rem)] overflow-y-auto pl-4 border-l border-zinc-200 dark:border-white/10">
                                         <div
-                                            className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-white mb-4">
-                                            On this page
+                                            className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-white mb-4">On
+                                            this page
                                         </div>
                                         {headings.length === 0 ? (
                                             <div className="text-sm text-zinc-400 italic">No subsections</div>
