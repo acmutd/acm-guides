@@ -1,7 +1,7 @@
 // @ts-expect-error ts dumb
-import React from "react";
-import { Link } from "react-router-dom";
-import { DOCS } from "./registry";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { DOCS } from './registry';
 
 export default function DocsIndex() {
   return (
@@ -44,12 +44,12 @@ export default function DocsIndex() {
               </h3>
               <p className="text-sm text-zinc-500 dark:text-zinc-400 line-clamp-3">
                 {doc.meta.description ||
-                  "Learn more about this topic in our detailed guide."}
+                  'Learn more about this topic in our detailed guide.'}
               </p>
             </div>
 
             <div className="mt-4 flex items-center text-sm font-medium text-orange-600 dark:text-orange-400">
-              Read Guide{" "}
+              Read Guide{' '}
               <span className="ml-1 transition-transform group-hover:translate-x-1">
                 &rarr;
               </span>

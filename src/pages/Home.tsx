@@ -1,12 +1,12 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { getRecentWorkshops } from "../docs/registry";
-import ParallaxImages from "../components/parallaxImages";
-import Navbar from "../components/navbar.tsx";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { getRecentWorkshops } from '../docs/registry';
+import ParallaxImages from '../components/parallaxImages';
+import Navbar from '../components/navbar.tsx';
 
 function GradientText({
   children,
-  gradient = "bg-development-gradient",
+  gradient = 'bg-development-gradient',
 }: {
   children: React.ReactNode;
   gradient?: string;
@@ -96,11 +96,11 @@ export default function Home() {
 
             <p className="mt-6 max-w-xl text-center text-xl text-zinc-700 font-medium leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 dark:text-zinc-300">
               ACM's premier documentation site. <br />
-              built by{" "}
+              built by{' '}
               <span className="text-black decoration-purple-500 underline underline-offset-4 dark:text-white">
                 students
               </span>
-              , for{" "}
+              , for{' '}
               <span className="text-black decoration-blue-500 underline underline-offset-4 dark:text-white">
                 students
               </span>
@@ -137,7 +137,7 @@ export default function Home() {
                 key={w.slug}
                 to={`/docs/${w.slug}`}
                 title={w.meta.title}
-                badge={i === 0 ? "New" : undefined}
+                badge={i === 0 ? 'New' : undefined}
               />
             ))}
           </div>

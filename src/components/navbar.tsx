@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
-import { Disclosure } from "@headlessui/react";
+import React, { useEffect, useState } from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import { Disclosure } from '@headlessui/react';
 import {
   Bars3Icon,
   XMarkIcon,
   ArrowTopRightOnSquareIcon,
-} from "@heroicons/react/24/outline";
-import { useTheme } from "../ThemeContext";
+} from '@heroicons/react/24/outline';
+import { useTheme } from '../ThemeContext';
 
 const links = [
-  { name: "home", to: "/" },
-  { name: "all docs", to: "/docs/workshops" },
+  { name: 'home', to: '/' },
+  { name: 'all docs', to: '/docs/workshops' },
 ];
 
 const SunIcon = () => (
@@ -47,12 +47,12 @@ const MoonIcon = () => (
 
 function navLinkClass(isActive: boolean) {
   return [
-    "rounded-full px-4 py-2 text-[11px] font-black uppercase tracking-widest transition-all",
-    "border",
+    'rounded-full px-4 py-2 text-[11px] font-black uppercase tracking-widest transition-all',
+    'border',
     isActive
-      ? "bg-zinc-900/5 border-zinc-900/10 text-zinc-900 dark:bg-white/10 dark:text-white dark:border-white/20"
-      : "bg-transparent border-transparent text-zinc-500 hover:bg-zinc-900/5 hover:text-zinc-900 dark:text-white/70 dark:hover:border-white/10 dark:hover:bg-white/5 dark:hover:text-white",
-  ].join(" ");
+      ? 'bg-zinc-900/5 border-zinc-900/10 text-zinc-900 dark:bg-white/10 dark:text-white dark:border-white/20'
+      : 'bg-transparent border-transparent text-zinc-500 hover:bg-zinc-900/5 hover:text-zinc-900 dark:text-white/70 dark:hover:border-white/10 dark:hover:bg-white/5 dark:hover:text-white',
+  ].join(' ');
 }
 
 function GradientText({ children }: { children: React.ReactNode }) {
@@ -70,13 +70,13 @@ export default function Navbar() {
   useEffect(() => {
     const onScroll = () => setTop(window.scrollY === 0);
     onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   const chrome = top
-    ? "bg-white/0 border-b border-transparent"
-    : "bg-white/80 backdrop-blur-xl border-b border-zinc-200 dark:bg-black/70 dark:border-white/10";
+    ? 'bg-white/0 border-b border-transparent'
+    : 'bg-white/80 backdrop-blur-xl border-b border-zinc-200 dark:bg-black/70 dark:border-white/10';
 
   return (
     <Disclosure
@@ -93,7 +93,9 @@ export default function Navbar() {
                   alt="ACM Logo"
                   className="h-32 w-32 object-contain transition-all duration-300 invert dark:invert-0"
                 />
-                <div className="hidden md:block text-2xl font-extralight">|</div>
+                <div className="hidden md:block text-2xl font-extralight">
+                  |
+                </div>
                 <div className="hidden sm:flex flex-col leading-none">
                   <span className="font-black tracking-tighter text-xl text-zinc-900 dark:text-white">
                     acm <GradientText>guides</GradientText>
@@ -106,7 +108,7 @@ export default function Navbar() {
                   <NavLink
                     key={item.to}
                     to={item.to}
-                    end={item.to === "/"}
+                    end={item.to === '/'}
                     className={({ isActive }) => navLinkClass(isActive)}
                   >
                     {item.name}
@@ -128,7 +130,7 @@ export default function Navbar() {
                   className="ml-2 flex items-center justify-center rounded-full border border-zinc-200 bg-white h-9 w-9 text-zinc-500 hover:bg-zinc-50 hover:text-orange-500 dark:border-white/10 dark:bg-white/5 dark:text-white/80 dark:hover:bg-white/10 dark:hover:text-orange-400 transition-all"
                   aria-label="Toggle Dark Mode"
                 >
-                  {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+                  {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
                 </button>
               </div>
 
@@ -152,7 +154,7 @@ export default function Navbar() {
                   key={item.to}
                   as={NavLink}
                   to={item.to}
-                  end={item.to === "/"}
+                  end={item.to === '/'}
                   className={({ isActive }: { isActive: boolean }) =>
                     navLinkClass(isActive)
                   }
@@ -177,8 +179,8 @@ export default function Navbar() {
                 onClick={toggleTheme}
                 className="flex w-full items-center justify-between rounded-full px-4 py-2 text-[11px] font-black uppercase tracking-widest text-zinc-500 hover:bg-zinc-900/5 hover:text-zinc-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white transition-all"
               >
-                <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
-                {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+                <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+                {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
               </button>
             </div>
           </Disclosure.Panel>

@@ -1,19 +1,20 @@
-import React, { Suspense, useMemo, useState, useEffect } from "react";
-import { NavLink, Link, useParams, useLocation } from "react-router-dom";
-import { Disclosure, Transition } from "@headlessui/react";
-import { ChevronRightIcon } from "@heroicons/react/20/solid";
+import React, { Suspense, useMemo, useState, useEffect } from 'react';
+import { NavLink, Link, useParams, useLocation } from 'react-router-dom';
+import { Disclosure, Transition } from '@headlessui/react';
+import { ChevronRightIcon } from '@heroicons/react/20/solid';
 import {
   ALL_DOCS,
   SIDEBAR_TREE,
   getDoc,
   type DocNode,
   type CategoryNode,
-} from "./registry";
-import Navbar from "../components/navbar.tsx";
-import DocsIndex from "./DocIndex";
+} from './registry';
+import Navbar from '../components/navbar.tsx';
+import DocsIndex from './DocIndex';
+import Pre from '../components/pre';
 
 function classNames(...xs: Array<string | false | undefined>) {
-  return xs.filter(Boolean).join(" ");
+  return xs.filter(Boolean).join(' ');
 }
 
 function SidebarItem({
@@ -25,16 +26,16 @@ function SidebarItem({
 }) {
   const location = useLocation();
 
-  if (node.type === "doc") {
+  if (node.type === 'doc') {
     return (
       <NavLink
         to={`/docs/${node.slug}`}
         className={({ isActive }) =>
           classNames(
-            "block rounded-r-lg py-2 text-sm transition-colors duration-200 border-l-2 pl-4 -ml-px",
+            'block rounded-r-lg py-2 text-sm transition-colors duration-200 border-l-2 pl-4 -ml-px',
             isActive
-              ? "border-zinc-900 font-medium text-zinc-900 bg-zinc-100 dark:bg-white/10 dark:text-white dark:border-white"
-              : "border-transparent text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:border-zinc-700 dark:hover:bg-white/5",
+              ? 'border-zinc-900 font-medium text-zinc-900 bg-zinc-100 dark:bg-white/10 dark:text-white dark:border-white'
+              : 'border-transparent text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:border-zinc-700 dark:hover:bg-white/5'
           )
         }
         style={{ marginLeft: depth * 12 }}
@@ -45,7 +46,7 @@ function SidebarItem({
   }
 
   const isChildActive = JSON.stringify(node).includes(
-    location.pathname.replace("/docs/", ""),
+    location.pathname.replace('/docs/', '')
   );
 
   return (
@@ -54,16 +55,16 @@ function SidebarItem({
         <>
           <Disclosure.Button
             className={classNames(
-              "flex w-full items-center justify-between py-2 text-left text-sm font-bold uppercase tracking-wider text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200",
-              open ? "text-zinc-900 dark:text-zinc-200" : "",
+              'flex w-full items-center justify-between py-2 text-left text-sm font-bold uppercase tracking-wider text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200',
+              open ? 'text-zinc-900 dark:text-zinc-200' : ''
             )}
             style={{ paddingLeft: depth * 12 }}
           >
             <span>{node.name}</span>
             <ChevronRightIcon
               className={classNames(
-                "h-4 w-4 text-zinc-400 transition-transform duration-200",
-                open ? "rotate-90" : "",
+                'h-4 w-4 text-zinc-400 transition-transform duration-200',
+                open ? 'rotate-90' : ''
               )}
             />
           </Disclosure.Button>
@@ -91,21 +92,21 @@ function useHeadings() {
   const [headings, setHeadings] = useState<
     { id: string; text: string; level: number }[]
   >([]);
-  const [activeId, setActiveId] = useState<string>("");
+  const [activeId, setActiveId] = useState<string>('');
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       const elements = Array.from(
-        document.querySelectorAll("article h2, article h3"),
+        document.querySelectorAll('article h2, article h3')
       );
       const parsed = elements.map((elem) => ({
-        id: elem.id || elem.innerHTML.toLowerCase().replace(/\s+/g, "-"),
-        text: elem.textContent ?? "",
+        id: elem.id || elem.innerHTML.toLowerCase().replace(/\s+/g, '-'),
+        text: elem.textContent ?? '',
         level: Number(elem.tagName.substring(1)),
       }));
       elements.forEach((elem) => {
         if (!elem.id)
-          elem.id = elem.innerHTML.toLowerCase().replace(/\s+/g, "-");
+          elem.id = elem.innerHTML.toLowerCase().replace(/\s+/g, '-');
       });
       setHeadings(parsed);
     }, 150);
@@ -120,9 +121,9 @@ function useHeadings() {
           if (entry.isIntersecting) setActiveId(entry.target.id);
         });
       },
-      { rootMargin: "0px 0px -80% 0px" },
+      { rootMargin: '0px 0px -80% 0px' }
     );
-    const elements = document.querySelectorAll("article h2, article h3");
+    const elements = document.querySelectorAll('article h2, article h3');
     elements.forEach((elem) => observer.observe(elem));
     return () => observer.disconnect();
   }, [headings]);
@@ -132,10 +133,10 @@ function useHeadings() {
 
 function DocsContent() {
   const params = useParams();
-  const splat = params["*"] ?? "";
+  const splat = params['*'] ?? '';
 
-  const isIndex = splat === "" || splat === "workshops";
-  const slug = splat.replace(/\/+$/, "");
+  const isIndex = splat === '' || splat === 'workshops';
+  const slug = splat.replace(/\/+$/, '');
 
   const entry = isIndex ? null : getDoc(slug);
 
@@ -150,6 +151,13 @@ function DocsContent() {
       next: ALL_DOCS[idx + 1] ?? null,
     };
   }, [slug, isIndex]);
+
+  const mdxComponents = useMemo(
+    () => ({
+      pre: Pre,
+    }),
+    []
+  );
 
   // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const LazyDoc = useMemo(() => {
@@ -237,16 +245,12 @@ function DocsContent() {
                         {/* Link Colors */}
                         prose-a:text-orange-600 dark:prose-a:text-orange-400
 
-                        {/* Code Block Wrapper (Always Dark) */}
-                        prose-pre:bg-zinc-900 prose-pre:text-zinc-100 prose-pre:border prose-pre:border-zinc-700
-                        dark:prose-pre:bg-white/5 dark:prose-pre:border-white/10 dark:prose-pre:text-zinc-100
+                        {/* RESET PRE STYLES (Handled by Custom Pre Component) */}
+                        prose-pre:p-0 prose-pre:bg-transparent prose-pre:border-none prose-pre:m-0
 
-                        {/* Inline Code */}
-                        prose-code:text-orange-500 prose-code:bg-orange-50 prose-code:px-1 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
+                        {/* Inline Code (Orange text, light background) */}
+                        prose-code:text-orange-600 prose-code:bg-orange-50 prose-code:px-1 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
                         dark:prose-code:text-orange-400 dark:prose-code:bg-white/10
-
-                        [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-zinc-100
-                        dark:[&_pre_code]:bg-transparent
 
                         {/* Table Styles */}
                         prose-table:w-full prose-table:border-collapse
@@ -255,11 +259,15 @@ function DocsContent() {
                         prose-th:bg-zinc-50 prose-th:p-4 prose-th:text-zinc-900
                         dark:prose-th:bg-white/5 dark:prose-th:text-zinc-100
                         prose-td:p-4 prose-td:text-zinc-700 dark:prose-td:text-zinc-300
+                        [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-zinc-100
+                        dark:[&_pre_code]:bg-transparent dark:[&_pre_code]:text-zinc-100
                       "
                       >
                         <h1 className="mb-4">{entry.meta.title}</h1>
-                        {/* eslint-disable-next-line react-hooks/static-components */}
-                        {LazyDoc ? <LazyDoc /> : null}
+                        {LazyDoc ? (
+                          // eslint-disable-next-line react-hooks/static-components
+                          <LazyDoc components={mdxComponents} />
+                        ) : null}
                       </article>
                     </Suspense>
 
@@ -321,16 +329,16 @@ function DocsContent() {
                             <a
                               href={`#${h.id}`}
                               className={classNames(
-                                "block transition-colors duration-200",
+                                'block transition-colors duration-200',
                                 activeId === h.id
-                                  ? "text-orange-600 font-medium dark:text-orange-400 translate-x-1"
-                                  : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200",
+                                  ? 'text-orange-600 font-medium dark:text-orange-400 translate-x-1'
+                                  : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
                               )}
                               onClick={(e) => {
                                 e.preventDefault();
                                 document
                                   .getElementById(h.id)
-                                  ?.scrollIntoView({ behavior: "smooth" });
+                                  ?.scrollIntoView({ behavior: 'smooth' });
                                 setActiveId(h.id);
                               }}
                             >
