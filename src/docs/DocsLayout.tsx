@@ -9,7 +9,6 @@ import {
   type DocNode,
   type CategoryNode,
 } from "./registry";
-import { ThemeProvider } from "../ThemeContext";
 import Navbar from "../components/navbar.tsx";
 import DocsIndex from "./DocIndex";
 
@@ -32,10 +31,10 @@ function SidebarItem({
         to={`/docs/${node.slug}`}
         className={({ isActive }) =>
           classNames(
-            "block rounded-lg py-2 text-sm transition-colors duration-200 border-l-2 pl-4 -ml-px",
+            "block rounded-r-lg py-2 text-sm transition-colors duration-200 border-l-2 pl-4 -ml-px",
             isActive
-              ? "border-orange-500 font-medium text-orange-600 bg-orange-50/50 dark:bg-orange-500/10 dark:text-orange-400"
-              : "border-transparent text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:border-zinc-700",
+              ? "border-zinc-900 font-medium text-zinc-900 bg-zinc-100 dark:bg-white/10 dark:text-white dark:border-white"
+              : "border-transparent text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:border-zinc-700 dark:hover:bg-white/5",
           )
         }
         style={{ marginLeft: depth * 12 }}
@@ -173,9 +172,9 @@ function DocsContent() {
           <div className="mb-6">
             <Link
               to="/docs"
-              className="text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-orange-500 dark:text-white/40"
+              className="text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-zinc-900 dark:text-white/40 dark:hover:text-white transition-colors"
             >
-              Home
+              Docs Home
             </Link>
           </div>
 
@@ -234,13 +233,22 @@ function DocsContent() {
                       <article
                         className="prose prose-zinc max-w-none
                         dark:prose-invert
+
+                        {/* Link Colors */}
                         prose-a:text-orange-600 dark:prose-a:text-orange-400
+
+                        {/* Code Block Wrapper (Always Dark) */}
                         prose-pre:bg-zinc-900 prose-pre:text-zinc-100 prose-pre:border prose-pre:border-zinc-700
                         dark:prose-pre:bg-white/5 dark:prose-pre:border-white/10 dark:prose-pre:text-zinc-100
-                        prose-code:text-orange-600 prose-code:bg-orange-50 prose-code:px-1 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
+
+                        {/* Inline Code */}
+                        prose-code:text-orange-500 prose-code:bg-orange-50 prose-code:px-1 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
                         dark:prose-code:text-orange-400 dark:prose-code:bg-white/10
-                        [&_pre_code]:bg-transparent [&_pre_code]:p-0
+
+                        [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-zinc-100
                         dark:[&_pre_code]:bg-transparent
+
+                        {/* Table Styles */}
                         prose-table:w-full prose-table:border-collapse
                         prose-thead:border-b prose-thead:border-zinc-200 dark:prose-thead:border-white/10
                         prose-tr:border-b prose-tr:border-zinc-200 dark:prose-tr:border-white/10
@@ -343,10 +351,4 @@ function DocsContent() {
   );
 }
 
-export default function DocsLayoutWrapper() {
-  return (
-    <ThemeProvider>
-      <DocsContent />
-    </ThemeProvider>
-  );
-}
+export default DocsContent;
