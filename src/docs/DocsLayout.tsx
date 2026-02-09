@@ -1,4 +1,11 @@
-import React, { Suspense, useMemo, useState, useEffect } from 'react';
+import React, {
+  Suspense,
+  useMemo,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+} from 'react';
 import { NavLink, Link, useParams, useLocation } from 'react-router-dom';
 import { Disclosure, Transition } from '@headlessui/react';
 import { ChevronRightIcon } from '@heroicons/react/20/solid';
@@ -17,6 +24,15 @@ function classNames(...xs: Array<string | false | undefined>) {
   return xs.filter(Boolean).join(' ');
 }
 
+function stripEmojis(str: string) {
+  return str
+    .replace(
+      /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
+      ''
+    )
+    .trim();
+}
+
 function SidebarItem({
   node,
   depth = 0,
@@ -26,21 +42,24 @@ function SidebarItem({
 }) {
   const location = useLocation();
 
+  const indentSize = 16;
+  const basePadding = 16;
+
   if (node.type === 'doc') {
     return (
       <NavLink
         to={`/docs/${node.slug}`}
         className={({ isActive }) =>
           classNames(
-            'block rounded-r-lg py-2 text-sm transition-colors duration-200 border-l-2 pl-4 -ml-px',
+            'group flex w-full min-w-0 items-center rounded-r-lg border-l-2 py-2 pr-2 text-sm font-medium transition-all duration-200 hover:text-zinc-900 dark:hover:text-white',
             isActive
-              ? 'border-zinc-900 font-medium text-zinc-900 bg-zinc-100 dark:bg-white/10 dark:text-white dark:border-white'
-              : 'border-transparent text-zinc-500 hover:text-zinc-900 hover:border-zinc-300 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:border-zinc-700 dark:hover:bg-white/5'
+              ? 'border-zinc-900 bg-zinc-100 text-zinc-900 dark:border-white dark:bg-white/10 dark:text-white'
+              : 'border-transparent text-zinc-500 hover:border-zinc-300 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:bg-white/5'
           )
         }
-        style={{ marginLeft: depth * 12 }}
+        style={{ paddingLeft: depth * indentSize + basePadding }}
       >
-        {node.title}
+        <span className="truncate">{stripEmojis(node.title)}</span>
       </NavLink>
     );
   }
@@ -55,15 +74,15 @@ function SidebarItem({
         <>
           <Disclosure.Button
             className={classNames(
-              'flex w-full items-center justify-between py-2 text-left text-sm font-bold uppercase tracking-wider text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200',
+              'flex w-full min-w-0 items-center justify-between py-2 pr-2 text-left text-xs font-bold uppercase tracking-wider text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200',
               open ? 'text-zinc-900 dark:text-zinc-200' : ''
             )}
-            style={{ paddingLeft: depth * 12 }}
+            style={{ paddingLeft: depth * indentSize + basePadding }}
           >
-            <span>{node.name}</span>
+            <span className="truncate mr-2">{stripEmojis(node.name)}</span>
             <ChevronRightIcon
               className={classNames(
-                'h-4 w-4 text-zinc-400 transition-transform duration-200',
+                'h-4 w-4 shrink-0 text-zinc-400 transition-transform duration-200',
                 open ? 'rotate-90' : ''
               )}
             />
@@ -76,7 +95,7 @@ function SidebarItem({
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-95 opacity-0"
           >
-            <Disclosure.Panel className="space-y-1 mt-1">
+            <Disclosure.Panel className="space-y-0.5 mt-1">
               {node.items.map((child, i) => (
                 <SidebarItem key={i} node={child} depth={depth + 1} />
               ))}
@@ -93,28 +112,49 @@ function useHeadings() {
     { id: string; text: string; level: number }[]
   >([]);
   const [activeId, setActiveId] = useState<string>('');
+  const observerRef = useRef<MutationObserver | null>(null);
+
+  const contentRef = useCallback((node: HTMLElement | null) => {
+    if (node) {
+      const parse = () => {
+        const elements = Array.from(node.querySelectorAll('h2, h3'));
+
+        const parsed = elements.map((elem) => ({
+          id:
+            elem.id ||
+            elem.innerHTML
+              .toLowerCase()
+              .replace(/\s+/g, '-')
+              .replace(/[^\w-]/g, ''),
+          text: elem.textContent ?? '',
+          level: Number(elem.tagName.substring(1)),
+        }));
+
+        elements.forEach((elem) => {
+          if (!elem.id)
+            elem.id = elem.innerHTML
+              .toLowerCase()
+              .replace(/\s+/g, '-')
+              .replace(/[^\w-]/g, '');
+        });
+
+        setHeadings((prev) => {
+          if (JSON.stringify(prev) === JSON.stringify(parsed)) return prev;
+          return parsed;
+        });
+      };
+
+      parse();
+      observerRef.current = new MutationObserver(parse);
+      observerRef.current.observe(node, { childList: true, subtree: true });
+    } else {
+      observerRef.current?.disconnect();
+    }
+  }, []);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      const elements = Array.from(
-        document.querySelectorAll('article h2, article h3')
-      );
-      const parsed = elements.map((elem) => ({
-        id: elem.id || elem.innerHTML.toLowerCase().replace(/\s+/g, '-'),
-        text: elem.textContent ?? '',
-        level: Number(elem.tagName.substring(1)),
-      }));
-      elements.forEach((elem) => {
-        if (!elem.id)
-          elem.id = elem.innerHTML.toLowerCase().replace(/\s+/g, '-');
-      });
-      setHeadings(parsed);
-    }, 150);
+    if (headings.length === 0) return;
 
-    return () => clearTimeout(timeout);
-  }, [window.location.pathname]);
-
-  useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -123,24 +163,23 @@ function useHeadings() {
       },
       { rootMargin: '0px 0px -80% 0px' }
     );
+
     const elements = document.querySelectorAll('article h2, article h3');
     elements.forEach((elem) => observer.observe(elem));
+
     return () => observer.disconnect();
   }, [headings]);
 
-  return { headings, activeId, setActiveId };
+  return { headings, activeId, setActiveId, contentRef };
 }
 
 function DocsContent() {
   const params = useParams();
   const splat = params['*'] ?? '';
-
   const isIndex = splat === '' || splat === 'workshops';
   const slug = splat.replace(/\/+$/, '');
-
   const entry = isIndex ? null : getDoc(slug);
-
-  const { headings, activeId, setActiveId } = useHeadings();
+  const { headings, activeId, setActiveId, contentRef } = useHeadings();
 
   const { prev, next } = useMemo(() => {
     if (isIndex) return { prev: null, next: null };
@@ -152,19 +191,14 @@ function DocsContent() {
     };
   }, [slug, isIndex]);
 
-  const mdxComponents = useMemo(
-    () => ({
-      pre: Pre,
-    }),
-    []
-  );
+  const mdxComponents = useMemo(() => ({ pre: Pre }), []);
 
   // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const LazyDoc = useMemo(() => {
     if (!entry) return null;
     return React.lazy(async () => {
       const mod = await entry.load();
-      // @ts-expect-error not a clue
+      // @ts-expect-error type safety is for the weak
       return { default: mod.default };
     });
   }, [entry?.slug]);
@@ -176,8 +210,13 @@ function DocsContent() {
       </div>
 
       <div className="pt-20 flex">
-        <aside className="fixed inset-y-0 top-20 left-0 z-30 hidden w-[280px] overflow-y-auto border-r border-zinc-200 bg-white/50 px-6 py-8 pb-20 backdrop-blur-xl dark:border-white/10 dark:bg-black/50 lg:block">
-          <div className="mb-6">
+        <aside
+          className="fixed inset-y-0 top-20 left-0 z-30 hidden w-[320px]
+          overflow-y-auto overflow-x-hidden border-r border-zinc-200 bg-white/50
+          px-4 py-8 pb-20 backdrop-blur-xl dark:border-white/10 dark:bg-black/50 lg:block
+          contain-content"
+        >
+          <div className="mb-6 px-4">
             <Link
               to="/docs"
               className="text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-zinc-900 dark:text-white/40 dark:hover:text-white transition-colors"
@@ -186,14 +225,14 @@ function DocsContent() {
             </Link>
           </div>
 
-          <nav className="space-y-1">
+          <nav className="space-y-0.5">
             {SIDEBAR_TREE.map((node, i) => (
               <SidebarItem key={i} node={node} />
             ))}
           </nav>
         </aside>
 
-        <div className="flex-1 min-w-0 lg:pl-[280px]">
+        <div className="flex-1 min-w-0 lg:pl-[320px]">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 xl:grid-cols-[1fr_240px] gap-10 py-10">
               <main className="min-w-0">
@@ -239,26 +278,24 @@ function DocsContent() {
                       }
                     >
                       <article
+                        ref={contentRef}
                         className="prose prose-zinc max-w-none
                         dark:prose-invert
 
-                        {/* Link Colors */}
                         prose-a:text-orange-600 dark:prose-a:text-orange-400
 
-                        {/* RESET PRE STYLES (Handled by Custom Pre Component) */}
                         prose-pre:p-0 prose-pre:bg-transparent prose-pre:border-none prose-pre:m-0
 
-                        {/* Inline Code (Orange text, light background) */}
                         prose-code:text-orange-600 prose-code:bg-orange-50 prose-code:px-1 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
                         dark:prose-code:text-orange-400 dark:prose-code:bg-white/10
 
-                        {/* Table Styles */}
                         prose-table:w-full prose-table:border-collapse
                         prose-thead:border-b prose-thead:border-zinc-200 dark:prose-thead:border-white/10
                         prose-tr:border-b prose-tr:border-zinc-200 dark:prose-tr:border-white/10
                         prose-th:bg-zinc-50 prose-th:p-4 prose-th:text-zinc-900
                         dark:prose-th:bg-white/5 dark:prose-th:text-zinc-100
                         prose-td:p-4 prose-td:text-zinc-700 dark:prose-td:text-zinc-300
+
                         [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-zinc-100
                         dark:[&_pre_code]:bg-transparent dark:[&_pre_code]:text-zinc-100
                       "
@@ -324,7 +361,7 @@ function DocsContent() {
                         {headings.map((h) => (
                           <li
                             key={h.id}
-                            style={{ paddingLeft: (h.level - 2) * 12 }}
+                            style={{ paddingLeft: (h.level - 2) * 20 }}
                           >
                             <a
                               href={`#${h.id}`}
@@ -342,7 +379,7 @@ function DocsContent() {
                                 setActiveId(h.id);
                               }}
                             >
-                              {h.text}
+                              {stripEmojis(h.text)}
                             </a>
                           </li>
                         ))}
