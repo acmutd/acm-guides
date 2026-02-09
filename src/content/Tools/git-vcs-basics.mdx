@@ -1,0 +1,43 @@
+export const meta = {
+  title: "Git & Version Control Basics",
+  description: "Dev's guide to using & understanding Git & VCS",
+  updated: "2026-02-09",
+};
+
+***
+
+# 🌲 ACM Workshop: Git & Version Control
+
+Welcome! In this guide, we will set up **Git**, the industry-standard tool for tracking code changes and collaborating with other developers.
+
+**What you’ll learn:**
+* **The Concept:** Understanding Version Control Systems (VCS) as "save points."
+* **The Setup:** How to install and configure Git on Windows and macOS.
+* **The Commands:** The essential cheat sheet for your daily workflow.
+
+***
+
+## 🧠 1. What is Version Control?
+Think of **Git** as a time machine for your code. It allows you to:
+1.  **Track History:** See exactly who changed what line of code and when.
+2.  **Collaborate:** Merge work from multiple people into one project without overwriting files.
+3.  **Revert:** Broke the app? Jump back to a previous "save point" (commit) instantly.
+
+### The Workflow
+Visualizing where your code lives is half the battle.
+
+| Stage                 | Description                                                       |
+|:----------------------|:------------------------------------------------------------------|
+| **Working Directory** | The files you are currently editing in VS Code.                   |
+| **Staging Area**      | The "on-deck" circle. Files you are *about* to save.              |
+| **Local Repository**  | Your private history of saved snapshots (commits) on your laptop. |
+| **Remote Repository** | The cloud version (GitHub/GitLab) where the team shares code.     |
+
+***
+
+## 💿 2. Installation
+Before we start, verify if you already have Git installed.
+
+**Verification Command:**
+```bash
+git --version

@@ -55,7 +55,7 @@ function navLinkClass(isActive: boolean) {
   ].join(' ');
 }
 
-function GradientText({ children }: { children: React.ReactNode }) {
+export function GradientText({ children }: { children: React.ReactNode }) {
   return (
     <span className="bg-development-gradient bg-clip-text text-transparent bg-size-200 animate-gradient">
       {children}

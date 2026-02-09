@@ -1,15 +1,4 @@
-export type DocNode = {
-  type: "doc";
-  title: string;
-  slug: string;
-  description?: string;
-};
-
-export type CategoryNode = {
-  type: "category";
-  name: string;
-  items: (DocNode | CategoryNode)[];
-};
+export type DocMeta = { title?: string; description?: string };
 
 export type DocEntry = {
   slug: string;
@@ -17,23 +6,26 @@ export type DocEntry = {
   load: () => Promise<never>;
 };
 
-const modules = import.meta.glob("../content/**/*.mdx");
+const modules = import.meta.glob("../content/**/*.mdx"); // lazy component
+const metas = import.meta.glob("../content/**/*.mdx", {
+  eager: true,
+  import: "meta",
+}) as Record<string, DocMeta | undefined>; // eager named export only [page:1]
 
 function getSlug(path: string) {
-  return path
-    .replace(/^\.\.\/content\//, "")
-    .replace(/\.mdx$/, "");
+  return path.replace(/^\.\.\/content\//, "").replace(/\.mdx$/, "");
 }
 
 function formatTitle(raw: string) {
   return raw
-    .replace(/^\d+-/, "") 
+    .replace(/^\d+-/, "")
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 }
 
 export const ALL_DOCS: DocEntry[] = [];
+// @ts-expect-error lame
 export const SIDEBAR_TREE: (DocNode | CategoryNode)[] = [];
 
 for (const path in modules) {
@@ -41,28 +33,28 @@ for (const path in modules) {
   const parts = slug.split("/");
   const filename = parts.pop()!;
 
+  const fm = metas[path];
+  
   const entry: DocEntry = {
     slug,
     meta: {
-      title: formatTitle(filename),
-      description: "", 
+      title: fm?.title ?? formatTitle(filename),
+      description: fm?.description,
     },
     load: modules[path] as never,
   };
+
   ALL_DOCS.push(entry);
 
   let currentLevel = SIDEBAR_TREE;
   parts.forEach((folder) => {
     let existingFolder = currentLevel.find(
       (n) => n.type === "category" && n.name === formatTitle(folder)
+    // @ts-expect-error not a clue
     ) as CategoryNode;
 
     if (!existingFolder) {
-      existingFolder = {
-        type: "category",
-        name: formatTitle(folder),
-        items: [],
-      };
+      existingFolder = { type: "category", name: formatTitle(folder), items: [] };
       currentLevel.push(existingFolder);
     }
     currentLevel = existingFolder.items;
@@ -70,27 +62,11 @@ for (const path in modules) {
 
   currentLevel.push({
     type: "doc",
-    title: formatTitle(filename),
+    title: entry.meta.title,
     slug,
+    description: entry.meta.description,
   });
 }
 
 ALL_DOCS.sort((a, b) => a.slug.localeCompare(b.slug));
-
-export function getDoc(slug: string) {
-  return ALL_DOCS.find((d) => d.slug === slug);
-}
-
-export function getRecentWorkshops() {
-  let workshops = ALL_DOCS.filter((doc) => 
-    doc.slug.toLowerCase().includes("workshop")
-  );
-
-  if (workshops.length === 0) {
-    workshops = ALL_DOCS;
-  }
-
-  return workshops.slice(0, 3);
-}
-
 export const DOCS = ALL_DOCS;
