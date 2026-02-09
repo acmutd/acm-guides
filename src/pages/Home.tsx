@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-// @ts-expect-error ts sucks
 import { getRecentWorkshops } from '../docs/registry';
 import ParallaxImages from '../components/parallaxImages';
 import Navbar from '../components/navbar.tsx';

@@ -13,17 +13,17 @@ export type CategoryNode = {
 
 export type DocEntry = {
   slug: string;
-  meta: { title: string; description?: string };
+  meta: { title: string; description?: string; updated?: string };
   load: () => Promise<never>;
 };
 
 const modules = import.meta.glob("../content/**/*.mdx");
 
-type MdxMeta = { title?: string; description?: string };
+type MdxMeta = { title?: string; description?: string; updated?: string };
 const metas = import.meta.glob("../content/**/*.mdx", {
   eager: true,
   import: "meta",
-}) as Record<string, MdxMeta | undefined>; // Vite glob named import [page:3]
+}) as Record<string, MdxMeta | undefined>;
 
 function getSlug(path: string) {
   return path.replace(/^\.\.\/content\//, "").replace(/\.mdx$/, "");
@@ -52,6 +52,7 @@ for (const path in modules) {
     meta: {
       title: fm?.title ?? formatTitle(filename),
       description: fm?.description,
+      updated: fm?.updated,
     },
     load: modules[path] as never,
   };
@@ -89,14 +90,18 @@ export function getDoc(slug: string) {
   return ALL_DOCS.find((d) => d.slug === slug);
 }
 
-export function getRecentWorkshops() {
-  let workshops = ALL_DOCS.filter((doc) =>
-    doc.slug.toLowerCase().includes("workshop")
-  );
+function updatedKey(doc: DocEntry) {
+  return doc.meta.updated ?? "";
+}
 
+export function getRecentWorkshops(count = 3) {
+  let workshops = ALL_DOCS
   if (workshops.length === 0) workshops = ALL_DOCS;
 
-  return workshops.slice(0, 3);
+  return workshops
+    .slice()
+    .sort((a, b) => updatedKey(b).localeCompare(updatedKey(a)))
+    .slice(0, count);
 }
 
 export const DOCS = ALL_DOCS;
