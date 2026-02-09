@@ -75,12 +75,14 @@ function DocsContent() {
     return (
         <div
             className="min-h-screen bg-white text-zinc-900 transition-colors duration-300 dark:bg-black dark:text-white">
+            {/* HEADER */}
             <div
                 className="fixed top-0 inset-x-0 z-50 h-20 border-b border-zinc-200 bg-white/80 backdrop-blur-xl dark:bg-black/80 dark:border-white/10">
                 <Navbar/>
             </div>
 
             <div className="pt-20 flex">
+                {/* LEFT SIDEBAR */}
                 <aside
                     className="fixed inset-y-0 top-20 left-0 z-30 hidden w-[280px] overflow-y-auto border-r border-zinc-200 bg-white/50 px-6 py-8 pb-20 backdrop-blur-xl dark:border-white/10 dark:bg-black/50 lg:block">
                     <div className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-white/40 mb-4">
@@ -106,6 +108,7 @@ function DocsContent() {
                     </nav>
                 </aside>
 
+                {/* MAIN CONTENT */}
                 <div className="flex-1 min-w-0 lg:pl-[280px]">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="grid grid-cols-1 xl:grid-cols-[1fr_240px] gap-10 py-10">
@@ -151,19 +154,26 @@ function DocsContent() {
                                             <article className="prose prose-zinc max-w-none
                         dark:prose-invert
 
-                        // LINKS
-                        prose-a:text-orange-600 dark:prose-a:text-orange-400
+                        {/* LINKS */}
+                        prose-a:text-orange-500 dark:prose-a:text-orange-400
 
-                        // CODE BLOCKS
+                        {/* CODE BLOCKS */}
                         prose-pre:bg-zinc-900 prose-pre:text-zinc-100 prose-pre:border prose-pre:border-zinc-700
                         dark:prose-pre:bg-white/5 dark:prose-pre:border-white/10 dark:prose-pre:text-zinc-100
 
-                        // INLINE CODE
-                        prose-code:text-orange-300 prose-code:bg-orange-50 prose-code:px-1 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
-                        dark:prose-code:text-orange-300 dark:prose-code:bg-white/10
+                        {/* INLINE CODE */}
+                        prose-code:text-orange-400 prose-code:bg-zinc-500/10 prose-code:px-1 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
+                        dark:prose-code:text-orange-400 dark:prose-code:bg-white/10
 
                         [&_pre_code]:bg-transparent [&_pre_code]:p-0
                         dark:[&_pre_code]:bg-transparent
+
+                        prose-table:w-full prose-table:border-collapse
+                        prose-thead:border-b prose-thead:border-zinc-200 dark:prose-thead:border-white/10
+                        prose-tr:border-b prose-tr:border-zinc-200 dark:prose-tr:border-white/10
+                        prose-th:bg-zinc-50 prose-th:p-4 prose-th:text-zinc-900
+                        dark:prose-th:bg-white/5 dark:prose-th:text-zinc-100
+                        prose-td:p-4 prose-td:text-zinc-700 dark:prose-td:text-zinc-300
                       ">
                                                 <h1 className="mb-4">{entry.meta.title}</h1>
                                                 {/* eslint-disable-next-line react-hooks/static-components */}

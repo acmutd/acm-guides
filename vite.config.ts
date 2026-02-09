@@ -1,10 +1,17 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import mdx from "@mdx-js/rollup";
+import remarkGfm from 'remark-gfm';
 
 export default defineConfig({
   plugins: [
-    { enforce: "pre", ...mdx() }, // must run before react(), don't move pls
+    {
+      enforce: 'pre',
+      ...mdx({
+        remarkPlugins: [remarkGfm], // <--- ADD THIS LINE
+      }),
+    }, // must run before react(), don't move pls
     react({ include: /\.(mdx|md|jsx|js|tsx|ts)$/ }),
+
   ],
 });
