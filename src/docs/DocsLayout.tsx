@@ -26,11 +26,21 @@ function classNames(...xs: Array<string | false | undefined>) {
 
 function stripEmojis(str: string) {
   return str
-    .replace(
-      /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
-      ''
-    )
+      // this might error in ur IDE, it works tho trust
+    .replace(/\p{Extended_Pictographic}|\uFE0F/gu, '')
     .trim();
+}
+
+function isNodeActive(
+  node: DocNode | CategoryNode,
+  currentPath: string
+): boolean {
+  if (node.type === 'doc') {
+    const nodePath = `/docs/${node.slug}`.replace(/\/$/, '').toLowerCase();
+    const activePath = currentPath.replace(/\/$/, '').toLowerCase();
+    return nodePath === activePath;
+  }
+  return node.items.some((child) => isNodeActive(child, currentPath));
 }
 
 function SidebarItem({
@@ -41,7 +51,6 @@ function SidebarItem({
   depth?: number;
 }) {
   const location = useLocation();
-
   const indentSize = 16;
   const basePadding = 16;
 
@@ -64,12 +73,15 @@ function SidebarItem({
     );
   }
 
-  const isChildActive = JSON.stringify(node).includes(
-    location.pathname.replace('/docs/', '')
-  );
+  const isActive = isNodeActive(node, location.pathname);
 
   return (
-    <Disclosure defaultOpen={isChildActive || depth === 0}>
+    <Disclosure
+      as="div"
+      key={node.name}
+      defaultOpen={isActive || depth === 0}
+      className="w-full"
+    >
       {({ open }) => (
         <>
           <Disclosure.Button
@@ -193,7 +205,6 @@ function DocsContent() {
 
   const mdxComponents = useMemo(() => ({ pre: Pre }), []);
 
-  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const LazyDoc = useMemo(() => {
     if (!entry) return null;
     return React.lazy(async () => {
@@ -201,7 +212,7 @@ function DocsContent() {
       // @ts-expect-error type safety is for the weak
       return { default: mod.default };
     });
-  }, [entry?.slug]);
+  }, [entry]);
 
   return (
     <div className="min-h-screen bg-white text-zinc-900 transition-colors duration-300 dark:bg-black dark:text-white">
@@ -230,11 +241,12 @@ function DocsContent() {
               <SidebarItem key={i} node={node} />
             ))}
           </nav>
+          <div className="h-8" />
         </aside>
 
         <div className="flex-1 min-w-0 lg:pl-[320px]">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 xl:grid-cols-[1fr_240px] gap-10 py-10">
+            <div className="py-10 xl:pr-[280px]">
               <main className="min-w-0">
                 {isIndex ? (
                   <DocsIndex />
@@ -345,53 +357,53 @@ function DocsContent() {
                   </>
                 )}
               </main>
-
-              {entry && !isIndex && (
-                <aside className="hidden xl:block">
-                  <div className="sticky top-28 max-h-[calc(100vh-8rem)] overflow-y-auto pl-4 border-l border-zinc-200 dark:border-white/10">
-                    <div className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-white mb-4">
-                      On this page
-                    </div>
-                    {headings.length === 0 ? (
-                      <div className="text-sm text-zinc-400 italic">
-                        No subsections
-                      </div>
-                    ) : (
-                      <ul className="space-y-2.5 text-sm">
-                        {headings.map((h) => (
-                          <li
-                            key={h.id}
-                            style={{ paddingLeft: (h.level - 2) * 20 }}
-                          >
-                            <a
-                              href={`#${h.id}`}
-                              className={classNames(
-                                'block transition-colors duration-200',
-                                activeId === h.id
-                                  ? 'text-orange-600 font-medium dark:text-orange-400 translate-x-1'
-                                  : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
-                              )}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                document
-                                  .getElementById(h.id)
-                                  ?.scrollIntoView({ behavior: 'smooth' });
-                                setActiveId(h.id);
-                              }}
-                            >
-                              {stripEmojis(h.text)}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </aside>
-              )}
             </div>
           </div>
         </div>
       </div>
+
+      {entry && !isIndex && (
+        <aside className="fixed top-20 right-0 z-20 hidden w-[240px] h-[calc(100vh-5rem)] xl:block">
+          <div className="h-full overflow-y-auto scrollbar-hover overflow-x-hidden pl-4 pr-6 pt-10 border-l border-zinc-200 dark:border-white/10">
+            <div className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-white mb-4 -mt-1">
+              On this page
+            </div>
+            {headings.length === 0 ? (
+              <div className="text-sm text-zinc-400 italic">
+                No subsections
+              </div>
+            ) : (
+              <ul className="space-y-2.5 text-sm mb-8">
+                {headings.map((h) => (
+                  <li
+                    key={h.id}
+                    style={{ paddingLeft: (h.level - 2) * 20 }}
+                  >
+                    <a
+                      href={`#${h.id}`}
+                      className={classNames(
+                        'block transition-colors duration-200 break-words',
+                        activeId === h.id
+                          ? 'text-orange-600 font-medium dark:text-orange-400'
+                          : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
+                      )}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        document
+                          .getElementById(h.id)
+                          ?.scrollIntoView({ behavior: 'smooth' });
+                        setActiveId(h.id);
+                      }}
+                    >
+                      {stripEmojis(h.text)}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </aside>
+      )}
     </div>
   );
 }

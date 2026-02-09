@@ -214,3 +214,28 @@
     border-color: rgba(255,255,255,0.10);
   }
 }
+
+.scrollbar-hover {
+  scrollbar-color: transparent transparent;
+}
+
+.scrollbar-hover:hover {
+  scrollbar-color: rgb(28, 28, 28) transparent;
+}
+
+.scrollbar-hover::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-hover::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-hover::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 4px;
+}
+
+.scrollbar-hover:hover::-webkit-scrollbar-thumb {
+  background: rgb(161 161 170);
+}

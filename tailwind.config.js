@@ -122,5 +122,6 @@ export default {
   plugins: [
     tailwindAnimate,
     typography,
+    require('tailwind-scrollbar-hide')
   ],
 };
