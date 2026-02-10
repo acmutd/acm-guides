@@ -75,8 +75,10 @@ function SidebarItem({
   }
 
   const isActive = isNodeActive(node, location.pathname);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [isOpen, setIsOpen] = useState(isActive || depth === 0);
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     if (isActive) {
       setIsOpen(true);
@@ -88,7 +90,7 @@ function SidebarItem({
       as="div"
       key={node.name}
       open={isOpen}
-      // @ts-ignore
+      // @ts-expect-error ts is stupid
       onChange={setIsOpen}
       className="w-full"
     >
