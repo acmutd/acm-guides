@@ -75,12 +75,21 @@ function SidebarItem({
   }
 
   const isActive = isNodeActive(node, location.pathname);
+  const [isOpen, setIsOpen] = useState(isActive || depth === 0);
+
+  useEffect(() => {
+    if (isActive) {
+      setIsOpen(true);
+    }
+  }, [isActive]);
 
   return (
     <Disclosure
       as="div"
       key={node.name}
-      defaultOpen={isActive || depth === 0}
+      open={isOpen}
+      // @ts-ignore
+      onChange={setIsOpen}
       className="w-full"
     >
       {({ open }) => (
@@ -321,9 +330,9 @@ function DocsContent() {
                       </article>
                     </Suspense>
 
-                    <hr className="my-12 border-zinc-200 dark:border-white/10" />
+                    <hr className="mt-12 border-zinc-200 dark:border-white/10" />
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-4 mt-8 mb-4">
                       {prev ? (
                         <Link
                           to={`/docs/${prev.slug}`}
