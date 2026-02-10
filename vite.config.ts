@@ -8,7 +8,7 @@ export default defineConfig({
     {
       enforce: 'pre',
       ...mdx({
-        remarkPlugins: [remarkGfm], // <--- ADD THIS LINE
+        remarkPlugins: [remarkGfm],
       }),
     }, // must run before react(), don't move pls
     react({ include: /\.(mdx|md|jsx|js|tsx|ts)$/ }),

@@ -1,5 +1,6 @@
 import typography from "@tailwindcss/typography";
 import tailwindAnimate from "tailwindcss-animate";
+import scrollbarHide from "tailwind-scrollbar-hide";
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -122,6 +123,6 @@ export default {
   plugins: [
     tailwindAnimate,
     typography,
-    require('tailwind-scrollbar-hide')
+    scrollbarHide,
   ],
 };
