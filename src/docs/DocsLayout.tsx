@@ -38,7 +38,7 @@ function isNodeActive(
 ): boolean {
   if (node.type === 'doc') {
     const nodePath = `/docs/${node.slug}`.replace(/\/$/, '').toLowerCase();
-    const activePath = currentPath.replace(/\/$/, '').toLowerCase();
+    const activePath = decodeURIComponent(currentPath).replace(/\/$/, '').toLowerCase();
     return nodePath === activePath;
   }
   return node.items.some((child) => isNodeActive(child, currentPath));
@@ -79,7 +79,7 @@ function SidebarItem({
   return (
     <Disclosure
       as="div"
-      key={node.name}
+      key={`${node.name}-${isActive}`}  // Remounts when isActive changes
       defaultOpen={isActive || depth === 0}
       className="w-full"
     >
@@ -190,7 +190,7 @@ function DocsContent() {
   const params = useParams();
   const splat = params['*'] ?? '';
   const isIndex = splat === '' || splat === 'workshops';
-  const slug = splat.replace(/\/+$/, '');
+  const slug = decodeURIComponent(splat.replace(/\/+$/, ''));
   const entry = isIndex ? null : getDoc(slug);
   const { headings, activeId, setActiveId, contentRef } = useHeadings();
 
@@ -286,6 +286,7 @@ function DocsContent() {
                     </div>
 
                     <Suspense
+                      key={slug}
                       fallback={
                         <div className="h-96 animate-pulse bg-zinc-100 dark:bg-white/5 rounded-2xl" />
                       }
