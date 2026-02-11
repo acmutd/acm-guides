@@ -19,35 +19,69 @@ const ParallaxImages: React.FC = () => {
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (typeof window === 'undefined') return;
-      const { width, height } =
-        document.documentElement.getBoundingClientRect();
+      const { width, height } = document.documentElement.getBoundingClientRect();
       const offX = e.clientX - width * 0.5;
       const offY = e.clientY - height * 0.5;
-
+    
       const layers = document.querySelectorAll('.parallax-layer');
       layers.forEach((layer) => {
         let imgClass = '';
         layer.classList.forEach((c) => {
           if (multipliers[c]) imgClass = c;
         });
-
+    
         const multiplier = multipliers[imgClass] || 0.02;
         const x = offX * -multiplier;
         const y = offY * -multiplier;
+        
+        (layer as HTMLElement).style.transition = 'none';
         (layer as HTMLElement).style.transform = `translate(${x}px, ${y}px)`;
       });
-
+    
       if (transition) setTransition(false);
     };
-
+    
     const handleMouseLeave = () => {
-      setTransition(true);
       document.querySelectorAll('.parallax-layer').forEach((layer) => {
-        (layer as HTMLElement).style.transform = `translate(0px, 0px)`;
+        const img = layer.querySelector('img');
+        if (img) img.style.animation = 'none';
+        (layer as HTMLElement).style.transition = 'transform 6s cubic-bezier(0.05, 0.7, 0.3, 1)';
+        (layer as HTMLElement).style.transform = 'translate(0, 0)';
       });
+      
+      setTimeout(() => {
+        document.querySelectorAll('.parallax-layer img').forEach((img) => {
+          (img as HTMLElement).style.animation = '';
+        });
+      }, 2000);
     };
-
-    const handleMouseEnter = () => setTransition(false);
+    
+    const handleMouseEnter = (e: MouseEvent) => {
+      setTransition(false);
+      const { width, height } = document.documentElement.getBoundingClientRect();
+      const offX = e.clientX - width * 0.5;
+      const offY = e.clientY - height * 0.5;
+      
+      document.querySelectorAll('.parallax-layer').forEach((layer) => {
+        let imgClass = '';
+        layer.classList.forEach((c) => {
+          if (multipliers[c]) imgClass = c;
+        });
+        const multiplier = multipliers[imgClass] || 0.02;
+        
+        (layer as HTMLElement).style.transition = 'transform 6s cubic-bezier(0.05, 0.7, 0.3, 1)';
+        (layer as HTMLElement).style.transform = `translate(${offX * -multiplier}px, ${offY * -multiplier}px)`;
+        
+        const img = layer.querySelector('img');
+        if (img) (img as HTMLElement).style.animation = '';
+      });
+      
+      setTimeout(() => {
+        document.querySelectorAll('.parallax-layer').forEach((layer) => {
+          (layer as HTMLElement).style.transition = 'none';
+        });
+      }, 6000);
+    };
 
     document.body.addEventListener('mousemove', handleMouseMove);
     document.body.addEventListener('mouseleave', handleMouseLeave);
@@ -85,7 +119,7 @@ const ParallaxImages: React.FC = () => {
 
     return (
       <div
-        className={`parallax-layer absolute ${name} ${className} z-0 transition-transform duration-1000 ease-out`}
+        className={`parallax-layer absolute ${name} ${className} z-0`}
       >
         <img
           src={src}
@@ -144,7 +178,7 @@ const ParallaxImages: React.FC = () => {
         dark:bg-[radial-gradient(circle,rgba(227,158,52,0.15)_0%,transparent_70%)]"
       />
 
-      <div className="parallax-layer peechi absolute z-20 right-[12%] top-[15%] transition-transform duration-1000 ease-out">
+      <div className="parallax-layer peechi absolute z-20 right-[12%] top-[15%]">
         <img
           className="w-32 sm:w-40 lg:w-56 animate-float
             drop-shadow-[0_10px_20px_rgba(0,0,0,0.1)] dark:drop-shadow-[0_0_50px_rgba(255,255,255,0.3)]"
