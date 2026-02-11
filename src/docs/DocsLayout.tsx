@@ -58,7 +58,7 @@ function SidebarItem({
   if (node.type === 'doc') {
     return (
       <NavLink
-        to={`/docs/${encodeURIComponent(node.slug)}`}
+        to={`/docs/${node.slug}`}
         className={({ isActive }) =>
           classNames(
             'group flex w-full min-w-0 items-center rounded-r-lg border-l-2 py-2 pr-2 text-sm font-medium transition-all duration-200 hover:text-zinc-900 dark:hover:text-white',
