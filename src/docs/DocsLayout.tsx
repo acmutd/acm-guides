@@ -75,23 +75,12 @@ function SidebarItem({
   }
 
   const isActive = isNodeActive(node, location.pathname);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [isOpen, setIsOpen] = useState(isActive || depth === 0);
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(() => {
-    if (isActive) {
-      setIsOpen(true);
-    }
-  }, [isActive]);
 
   return (
     <Disclosure
       as="div"
       key={node.name}
-      open={isOpen}
-      // @ts-expect-error ts is stupid
-      onChange={setIsOpen}
+      defaultOpen={isActive || depth === 0}
       className="w-full"
     >
       {({ open }) => (
