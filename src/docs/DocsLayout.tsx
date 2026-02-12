@@ -6,7 +6,7 @@ import React, {
   useRef,
   useCallback,
 } from 'react';
-import { NavLink, Link, useParams, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, Link, useParams, useLocation } from 'react-router-dom';
 import { Dialog, Disclosure, Transition } from '@headlessui/react';
 import { ChevronRightIcon } from '@heroicons/react/20/solid';
 import {
@@ -147,9 +147,7 @@ function MobileDocHeader({
   entry: any;
   onSidebarOpen: () => void;
   onTocOpen: () => void;
-}) {
-  const navigate = useNavigate();
-  
+}) {  
   return (
     <div className="lg:hidden sticky top-20 z-10 -mx-4 sm:-mx-6 px-4 sm:px-6 py-4 bg-white/95 dark:bg-black/95 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10">
       <div className="flex items-center gap-3">
