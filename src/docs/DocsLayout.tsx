@@ -6,8 +6,8 @@ import React, {
   useRef,
   useCallback,
 } from 'react';
-import { NavLink, Link, useParams, useLocation } from 'react-router-dom';
-import { Disclosure, Transition } from '@headlessui/react';
+import { NavLink, Link, useParams, useLocation, useNavigate } from 'react-router-dom';
+import { Dialog, Disclosure, Transition } from '@headlessui/react';
 import { ChevronRightIcon } from '@heroicons/react/20/solid';
 import {
   ALL_DOCS,
@@ -27,7 +27,7 @@ function classNames(...xs: Array<string | false | undefined>) {
 
 function stripEmojis(str: string) {
   return str
-      // this might error in ur IDE, it works tho trust
+    // this might error in ur IDE, it works tho trust
     .replace(/\p{Extended_Pictographic}|\uFE0F/gu, '')
     .trim();
 }
@@ -44,12 +44,152 @@ function isNodeActive(
   return node.items.some((child) => isNodeActive(child, currentPath));
 }
 
+// Mobile Drawer Components
+function MobileSidebarDrawer({ 
+  open, 
+  onClose 
+}: { 
+  open: boolean; 
+  onClose: () => void;
+}) {
+  return (
+    <Dialog open={open} onClose={onClose} className="relative z-50 lg:hidden">
+      <div className="fixed inset-0 bg-black/50" />
+      
+      <div className="fixed inset-0 flex">
+        <Dialog.Panel className="relative w-full max-w-xs bg-white dark:bg-black">
+          <div className="h-full overflow-y-auto p-6">
+            <div className="mb-6">
+              <Link
+                to="/docs"
+                onClick={onClose}
+                className="text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-zinc-900 dark:text-white/40 dark:hover:text-white"
+              >
+                Home
+              </Link>
+            </div>
+            
+            <nav className="space-y-0.5">
+              {SIDEBAR_TREE.map((node, i) => (
+                <SidebarItem key={i} node={node} onClose={onClose} />
+              ))}
+            </nav>
+          </div>
+        </Dialog.Panel>
+      </div>
+    </Dialog>
+  );
+}
+
+function MobileTOCDrawer({ 
+  open, 
+  onClose,
+  headings,
+  activeId,
+  setActiveId
+}: { 
+  open: boolean; 
+  onClose: () => void;
+  headings: any[];
+  activeId: string;
+  setActiveId: (id: string) => void;
+}) {
+  return (
+    <Dialog open={open} onClose={onClose} className="relative z-50 lg:hidden">
+      <div className="fixed inset-0 bg-black/50" />
+      
+      <div className="fixed inset-0 flex justify-end">
+        <Dialog.Panel className="relative w-full max-w-xs bg-white dark:bg-black">
+          <div className="h-full overflow-y-auto p-6">
+            <div className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-white mb-4">
+              On this page
+            </div>
+            
+            {headings.length === 0 ? (
+              <div className="text-sm text-zinc-400 dark:text-zinc-500 italic">No subsections</div>
+            ) : (
+              <ul className="space-y-3">
+                {headings.map((h) => (
+                  <li key={h.id} style={{ paddingLeft: (h.level - 2) * 16 }}>
+                    <a
+                      href={`#${h.id}`}
+                      className={classNames(
+                        'block text-sm transition-colors',
+                        activeId === h.id
+                          ? 'text-orange-600 dark:text-orange-500 font-medium'
+                          : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                      )}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        document.getElementById(h.id)?.scrollIntoView({ behavior: 'smooth' });
+                        setActiveId(h.id);
+                        onClose();
+                      }}
+                    >
+                      {stripEmojis(h.text)}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </Dialog.Panel>
+      </div>
+    </Dialog>
+  );
+}
+
+function MobileDocHeader({ 
+  entry, 
+  onSidebarOpen,
+  onTocOpen 
+}: { 
+  entry: any;
+  onSidebarOpen: () => void;
+  onTocOpen: () => void;
+}) {
+  const navigate = useNavigate();
+  
+  return (
+    <div className="lg:hidden sticky top-20 z-10 -mx-4 sm:-mx-6 px-4 sm:px-6 py-4 bg-white/95 dark:bg-black/95 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10">
+      <div className="flex items-center gap-3">
+        <button 
+          onClick={onSidebarOpen}
+          className="p-2 -ml-2 text-zinc-600 hover:text-zinc-900 dark:text-white/60 dark:hover:text-white"
+        >
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+        </button>
+        <div className="flex-1 min-w-0">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400 mb-0.5">
+            GUIDE
+          </div>
+          <div className="text-sm font-medium text-zinc-900 dark:text-white/90 truncate">
+            {entry.meta.title}
+          </div>
+        </div>
+        <button 
+          onClick={onTocOpen}
+          className="p-2 text-zinc-600 hover:text-zinc-900 dark:text-white/60 dark:hover:text-white"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h8M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function SidebarItem({
   node,
   depth = 0,
+  onClose,
 }: {
   node: DocNode | CategoryNode;
   depth?: number;
+  onClose?: () => void;
 }) {
   const location = useLocation();
   const indentSize = 16;
@@ -59,6 +199,7 @@ function SidebarItem({
     return (
       <NavLink
         to={`/docs/${node.slug}`}
+        onClick={onClose}
         className={({ isActive }) =>
           classNames(
             'group flex w-full min-w-0 items-center rounded-r-lg border-l-2 py-2 pr-2 text-sm font-medium transition-all duration-200 hover:text-zinc-900 dark:hover:text-white',
@@ -79,7 +220,7 @@ function SidebarItem({
   return (
     <Disclosure
       as="div"
-      key={`${node.name}-${isActive}`}  // Remounts when isActive changes
+      key={`${node.name}-${isActive}`}
       defaultOpen={isActive || depth === 0}
       className="w-full"
     >
@@ -110,7 +251,7 @@ function SidebarItem({
           >
             <Disclosure.Panel className="space-y-0.5 mt-1">
               {node.items.map((child, i) => (
-                <SidebarItem key={i} node={child} depth={depth + 1} />
+                <SidebarItem key={i} node={child} depth={depth + 1} onClose={onClose} />
               ))}
             </Disclosure.Panel>
           </Transition>
@@ -187,6 +328,9 @@ function useHeadings() {
 }
 
 function DocsContent() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [tocOpen, setTocOpen] = useState(false);
+  
   const params = useParams();
   const splat = params['*'] ?? '';
   const isIndex = splat === '' || splat === 'workshops';
@@ -270,7 +414,17 @@ function DocsContent() {
                   </div>
                 ) : (
                   <>
-                    <div className="mb-6 flex items-center gap-2 text-sm text-zinc-500">
+                    {/* Mobile Header */}
+                    {!isIndex && entry && (
+                      <MobileDocHeader 
+                        entry={entry}
+                        onSidebarOpen={() => setSidebarOpen(true)}
+                        onTocOpen={() => setTocOpen(true)}
+                      />
+                    )}
+
+                    {/* Desktop Breadcrumb */}
+                    <div className="mb-6 hidden lg:flex items-center gap-2 text-sm text-zinc-500">
                       <Link
                         to="/docs"
                         className="hover:text-zinc-900 dark:hover:text-white"
@@ -314,7 +468,7 @@ function DocsContent() {
                         dark:[&_pre_code]:bg-transparent dark:[&_pre_code]:text-zinc-100
                       "
                       >
-                        <h1 className="mb-4">{entry.meta.title}</h1>
+                        <h1 className="mb-4 hidden lg:block">{entry.meta.title}</h1>
                         {LazyDoc ? (
                           // eslint-disable-next-line react-hooks/static-components
                           <LazyDoc components={mdxComponents} />
@@ -364,6 +518,7 @@ function DocsContent() {
         </div>
       </div>
 
+      {/* Desktop TOC Sidebar */}
       {entry && !isIndex && (
         <aside className="fixed top-20 right-0 z-20 hidden w-[240px] h-[calc(100vh-5rem)] xl:block">
           <div className="h-full overflow-y-auto scrollbar-hover overflow-x-hidden pl-4 pr-6 pt-10 border-l border-zinc-200 dark:border-white/10">
@@ -405,6 +560,22 @@ function DocsContent() {
             )}
           </div>
         </aside>
+      )}
+
+      {/* Mobile Drawers */}
+      <MobileSidebarDrawer 
+        open={sidebarOpen} 
+        onClose={() => setSidebarOpen(false)} 
+      />
+
+      {!isIndex && entry && (
+        <MobileTOCDrawer 
+          open={tocOpen}
+          onClose={() => setTocOpen(false)}
+          headings={headings}
+          activeId={activeId}
+          setActiveId={setActiveId}
+        />
       )}
     </div>
   );

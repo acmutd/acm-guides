@@ -93,10 +93,10 @@ export default function Navbar() {
                   alt="ACM Logo"
                   className="h-32 w-32 object-contain transition-all duration-300 invert dark:invert-0"
                 />
-                <div className="hidden md:block text-2xl font-extralight">
+                <div className="block text-2xl font-extralight">
                   |
                 </div>
-                <div className="hidden sm:flex flex-col leading-none">
+                <div className="flex flex-col leading-none">
                   <span className="font-black tracking-tighter text-xl text-zinc-900 dark:text-white">
                     acm <GradientText>guides</GradientText>
                   </span>
