@@ -44,8 +44,42 @@ function isNodeActive(
   return node.items.some((child) => isNodeActive(child, currentPath));
 }
 
-// Mobile Drawer Components
-function MobileSidebarDrawer({ 
+// scroll event
+function useScrollDirection() {
+  const [scrollDir, setScrollDir] = useState<'up' | 'down'>('up');
+  const lastScrollY = useRef(0);
+  const ticking = useRef(false);
+
+  useEffect(() => {
+    const updateScrollDir = () => {
+      const scrollY = window.scrollY;
+
+      if (Math.abs(scrollY - lastScrollY.current) < 10) {
+        ticking.current = false;
+        return;
+      }
+
+      setScrollDir(scrollY > lastScrollY.current ? 'down' : 'up');
+      lastScrollY.current = scrollY > 0 ? scrollY : 0;
+      ticking.current = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking.current) {
+        window.requestAnimationFrame(updateScrollDir);
+        ticking.current = true;
+      }
+    };
+
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  return scrollDir;
+}
+
+// Guides drawer (all guides from SIDEBAR_TREE)
+function MobileGuidesDrawer({ 
   open, 
   onClose 
 }: { 
@@ -59,14 +93,22 @@ function MobileSidebarDrawer({
       <div className="fixed inset-0 flex">
         <Dialog.Panel className="relative w-full max-w-xs bg-white dark:bg-black">
           <div className="h-full overflow-y-auto p-6">
-            <div className="mb-6">
+            <div className="flex items-center justify-between mb-6">
               <Link
                 to="/docs"
                 onClick={onClose}
                 className="text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-zinc-900 dark:text-white/40 dark:hover:text-white"
               >
-                Home
+                All Guides
               </Link>
+              <button 
+                onClick={onClose}
+                className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
             
             <nav className="space-y-0.5">
@@ -101,8 +143,18 @@ function MobileTOCDrawer({
       <div className="fixed inset-0 flex justify-end">
         <Dialog.Panel className="relative w-full max-w-xs bg-white dark:bg-black">
           <div className="h-full overflow-y-auto p-6">
-            <div className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-white mb-4">
-              On this page
+            <div className="flex items-center justify-between mb-4">
+              <div className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-white">
+                On this page
+              </div>
+              <button 
+                onClick={onClose}
+                className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
             
             {headings.length === 0 ? (
@@ -139,42 +191,57 @@ function MobileTOCDrawer({
   );
 }
 
+// Mobile header - just title and guide controls (ToC + Guides drawer)
 function MobileDocHeader({ 
   entry, 
-  onSidebarOpen,
-  onTocOpen 
+  onTocOpen,
+  onGuidesOpen,
 }: { 
   entry: any;
-  onSidebarOpen: () => void;
   onTocOpen: () => void;
+  onGuidesOpen: () => void;
 }) {  
+  const scrollDir = useScrollDirection();
+
   return (
-    <div className="lg:hidden sticky top-20 z-10 -mx-4 sm:-mx-6 px-4 sm:px-6 py-4 bg-white/95 dark:bg-black/95 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10">
-      <div className="flex items-center gap-3">
-        <button 
-          onClick={onSidebarOpen}
-          className="p-2 -ml-2 text-zinc-600 hover:text-zinc-900 dark:text-white/60 dark:hover:text-white"
-        >
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-          </svg>
-        </button>
+      <div className={classNames(
+        "lg:hidden sticky top-20 z-10 -mx-4 sm:-mx-6 px-4 sm:px-6 py-4 bg-white/95 dark:bg-black/95 backdrop-blur-xl transition-transform duration-300",
+        scrollDir === 'down' ? '-translate-y-full' : 'translate-y-0'
+      )}>
+      <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400 mb-0.5">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400 mb-1.5">
             GUIDE
           </div>
-          <div className="text-sm font-medium text-zinc-900 dark:text-white/90 truncate">
+          <h1 className="text-xl font-bold text-zinc-900 dark:text-white leading-tight">
             {entry.meta.title}
-          </div>
+          </h1>
         </div>
-        <button 
-          onClick={onTocOpen}
-          className="p-2 text-zinc-600 hover:text-zinc-900 dark:text-white/60 dark:hover:text-white"
-        >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h8M4 18h16" />
-          </svg>
-        </button>
+        
+        {/* Two buttons - Guides and ToC */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {/* Guides button */}
+          <button 
+            onClick={onGuidesOpen}
+            className="p-2 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/5 rounded-lg transition-colors"
+            aria-label="Open guides"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          </button>
+          
+          {/* ToC button */}
+          <button 
+            onClick={onTocOpen}
+            className="p-2 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/5 rounded-lg transition-colors"
+            aria-label="Table of contents"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -326,8 +393,9 @@ function useHeadings() {
 }
 
 function DocsContent() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // Two separate state variables for the two drawers
   const [tocOpen, setTocOpen] = useState(false);
+  const [guidesOpen, setGuidesOpen] = useState(false);
   
   const params = useParams();
   const splat = params['*'] ?? '';
@@ -412,12 +480,12 @@ function DocsContent() {
                   </div>
                 ) : (
                   <>
-                    {/* Mobile Header */}
+                    {/* Mobile Header with guide controls */}
                     {!isIndex && entry && (
                       <MobileDocHeader 
                         entry={entry}
-                        onSidebarOpen={() => setSidebarOpen(true)}
                         onTocOpen={() => setTocOpen(true)}
+                        onGuidesOpen={() => setGuidesOpen(true)}
                       />
                     )}
 
@@ -561,20 +629,18 @@ function DocsContent() {
       )}
 
       {/* Mobile Drawers */}
-      <MobileSidebarDrawer 
-        open={sidebarOpen} 
-        onClose={() => setSidebarOpen(false)} 
+      <MobileTOCDrawer 
+        open={tocOpen}
+        onClose={() => setTocOpen(false)}
+        headings={headings}
+        activeId={activeId}
+        setActiveId={setActiveId}
       />
 
-      {!isIndex && entry && (
-        <MobileTOCDrawer 
-          open={tocOpen}
-          onClose={() => setTocOpen(false)}
-          headings={headings}
-          activeId={activeId}
-          setActiveId={setActiveId}
-        />
-      )}
+      <MobileGuidesDrawer 
+        open={guidesOpen} 
+        onClose={() => setGuidesOpen(false)} 
+      />
     </div>
   );
 }
