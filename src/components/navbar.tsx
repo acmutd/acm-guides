@@ -63,7 +63,7 @@ export function GradientText({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function Navbar() {
+export default function Navbar({ hideMobileMenu = false }: { hideMobileMenu?: boolean }) {
   const [top, setTop] = useState(true);
   const { theme, toggleTheme } = useTheme();
 
@@ -134,20 +134,31 @@ export default function Navbar() {
                 </button>
               </div>
 
-              <div className="md:hidden">
-                <Disclosure.Button className="inline-flex items-center justify-center rounded-full border border-zinc-200 bg-zinc-50 p-2 text-zinc-900 hover:bg-zinc-100 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 transition-all">
-                  <span className="sr-only">Open menu</span>
-                  {open ? (
-                    <XMarkIcon className="h-5 w-5" aria-hidden="true" />
-                  ) : (
-                    <Bars3Icon className="h-5 w-5" aria-hidden="true" />
-                  )}
-                </Disclosure.Button>
-              </div>
+              {!hideMobileMenu && (
+                <div className="md:hidden">
+                  <Disclosure.Button className="inline-flex items-center justify-center rounded-full border border-zinc-200 bg-zinc-50 p-2 text-zinc-900 hover:bg-zinc-100 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 transition-all">
+                    <span className="sr-only">Open menu</span>
+                    {open ? (
+                      <XMarkIcon className="h-5 w-5" aria-hidden="true" />
+                    ) : (
+                      <Bars3Icon className="h-5 w-5" aria-hidden="true" />
+                    )}
+                  </Disclosure.Button>
+                </div>
+              )}
             </div>
           </div>
 
-          <Disclosure.Panel className="md:hidden bg-white/90 backdrop-blur-xl border-t border-zinc-200 dark:bg-black/70 dark:border-white/10">
+          {!hideMobileMenu && (
+            <>
+              {open && (
+                <Disclosure.Button 
+                  className="fixed left-0 right-0 bottom-0 top-20 z-40 bg-black/20 dark:bg-black/40 md:hidden min-h-screen"
+                  aria-label="Close menu"
+                />
+              )}
+
+              <Disclosure.Panel className="fixed inset-x-0 top-20 z-50 md:hidden bg-white/90 backdrop-blur-xl border-t border-zinc-200 dark:bg-black/70 dark:border-white/10">
             <div className="mx-auto max-w-6xl px-6 py-4 flex flex-col gap-2">
               {links.map((item) => (
                 <Disclosure.Button
@@ -184,6 +195,8 @@ export default function Navbar() {
               </button>
             </div>
           </Disclosure.Panel>
+            </>
+          )}
         </>
       )}
     </Disclosure>
