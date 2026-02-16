@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { peechi, orb1, orb2, orb3, orb4, orb5, orb6, orb7 } from './data';
 
 const multipliers: { [key: string]: number } = {
@@ -14,68 +14,91 @@ const multipliers: { [key: string]: number } = {
 };
 
 const ParallaxImages: React.FC = () => {
-  const [transition, setTransition] = useState(false);
+  const rafRef = useRef<number | undefined>(undefined);
+  const mousePos = useRef({ x: 0, y: 0 });
+  const isHovering = useRef(false);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (typeof window === 'undefined') return;
-      const { width, height } = document.documentElement.getBoundingClientRect();
-      const offX = e.clientX - width * 0.5;
-      const offY = e.clientY - height * 0.5;
-    
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+
+    const handleResize = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+    };
+
+    const updateParallax = () => {
+      if (!isHovering.current) return;
+
+      const offX = mousePos.current.x - width * 0.5;
+      const offY = mousePos.current.y - height * 0.5;
+
       const layers = document.querySelectorAll('.parallax-layer');
       layers.forEach((layer) => {
         let imgClass = '';
         layer.classList.forEach((c) => {
           if (multipliers[c]) imgClass = c;
         });
-    
+
         const multiplier = multipliers[imgClass] || 0.02;
         const x = offX * -multiplier;
         const y = offY * -multiplier;
         
-        (layer as HTMLElement).style.transition = 'none';
-        (layer as HTMLElement).style.transform = `translate(${x}px, ${y}px)`;
+        (layer as HTMLElement).style.transform = `translate3d(${x}px, ${y}px, 0)`;
       });
-    
-      if (transition) setTransition(false);
     };
-    
+
+    const handleMouseMove = (e: MouseEvent) => {
+      mousePos.current = { x: e.clientX, y: e.clientY };
+      
+      if (!isHovering.current) return;
+
+      // Cancel previous frame and request new one (safari throttling workaround me thinks)
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+      
+      rafRef.current = requestAnimationFrame(updateParallax);
+    };
+
     const handleMouseLeave = () => {
+      isHovering.current = false;
+      
       document.querySelectorAll('.parallax-layer').forEach((layer) => {
         const img = layer.querySelector('img');
         if (img) img.style.animation = 'none';
         (layer as HTMLElement).style.transition = 'transform 6s cubic-bezier(0.05, 0.7, 0.3, 1)';
-        (layer as HTMLElement).style.transform = 'translate(0, 0)';
+        (layer as HTMLElement).style.transform = 'translate3d(0, 0, 0)';
       });
-      
+
       setTimeout(() => {
         document.querySelectorAll('.parallax-layer img').forEach((img) => {
           (img as HTMLElement).style.animation = '';
         });
       }, 2000);
     };
-    
+
     const handleMouseEnter = (e: MouseEvent) => {
-      setTransition(false);
-      const { width, height } = document.documentElement.getBoundingClientRect();
+      isHovering.current = true;
+      mousePos.current = { x: e.clientX, y: e.clientY };
+
       const offX = e.clientX - width * 0.5;
       const offY = e.clientY - height * 0.5;
-      
+
       document.querySelectorAll('.parallax-layer').forEach((layer) => {
         let imgClass = '';
         layer.classList.forEach((c) => {
           if (multipliers[c]) imgClass = c;
         });
         const multiplier = multipliers[imgClass] || 0.02;
-        
+
         (layer as HTMLElement).style.transition = 'transform 6s cubic-bezier(0.05, 0.7, 0.3, 1)';
-        (layer as HTMLElement).style.transform = `translate(${offX * -multiplier}px, ${offY * -multiplier}px)`;
-        
+        (layer as HTMLElement).style.transform = `translate3d(${offX * -multiplier}px, ${offY * -multiplier}px, 0)`;
+
         const img = layer.querySelector('img');
         if (img) (img as HTMLElement).style.animation = '';
       });
-      
+
       setTimeout(() => {
         document.querySelectorAll('.parallax-layer').forEach((layer) => {
           (layer as HTMLElement).style.transition = 'none';
@@ -83,16 +106,21 @@ const ParallaxImages: React.FC = () => {
       }, 6000);
     };
 
-    document.body.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('resize', handleResize);
+    document.body.addEventListener('mousemove', handleMouseMove, { passive: true });
     document.body.addEventListener('mouseleave', handleMouseLeave);
     document.body.addEventListener('mouseenter', handleMouseEnter);
 
     return () => {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+      window.removeEventListener('resize', handleResize);
       document.body.removeEventListener('mousemove', handleMouseMove);
       document.body.removeEventListener('mouseleave', handleMouseLeave);
       document.body.removeEventListener('mouseenter', handleMouseEnter);
     };
-  }, [transition]);
+  }, []);
 
   const styles = `
     @keyframes float {
@@ -103,6 +131,9 @@ const ParallaxImages: React.FC = () => {
     .animate-float {
       animation: float infinite ease-in-out;
     }
+    .parallax-layer {
+      will-change: transform;
+    }
   `;
 
   const renderOrb = (
@@ -112,10 +143,13 @@ const ParallaxImages: React.FC = () => {
     size: string,
     blur = '0px'
   ) => {
-    // eslint-disable-next-line react-hooks/purity
     const duration = 10 + Math.random() * 10 + 's';
-    // eslint-disable-next-line react-hooks/purity
     const delay = '-' + Math.random() * 10 + 's';
+
+    const blurClass = blur === '4px' ? 'blur-sm' :
+      blur === '2px' ? 'blur-[2px]' :
+      blur === '1px' ? 'blur-[1px]' :
+      '';
 
     return (
       <div
@@ -124,10 +158,9 @@ const ParallaxImages: React.FC = () => {
         <img
           src={src}
           alt=""
-          className={`animate-float transition-opacity duration-300 ${size} 
+          className={`animate-float transition-opacity duration-300 ${size} ${blurClass}
             opacity-90 hover:opacity-100 mix-blend-multiply dark:mix-blend-normal dark:opacity-70 dark:hover:opacity-100`}
           style={{
-            filter: `blur(${blur})`,
             animationDuration: duration,
             animationDelay: delay,
           }}
@@ -137,7 +170,7 @@ const ParallaxImages: React.FC = () => {
   };
 
   return (
-    <div className="pointer-events-none fixed inset-0 overflow-hidden transition-colors duration-500 bg-zinc-50 dark:bg-black">
+    <div className="pointer-events-none absolute inset-0 overflow-hidden transition-colors duration-500 bg-zinc-50 dark:bg-black">
       <style>{styles}</style>
 
       <div className="absolute inset-0 z-[1] opacity-[0.03] dark:opacity-[0.03] mix-blend-overlay">
@@ -158,22 +191,21 @@ const ParallaxImages: React.FC = () => {
         </svg>
       </div>
 
-      {/*
-       */}
+      {/* Gradient blobs - reduced blur */}
       <div
-        className="absolute -left-[10%] -top-[10%] w-[50vw] h-[50vw] rounded-full blur-3xl z-0
+        className="absolute -left-[10%] -top-[10%] w-[50vw] h-[50vw] rounded-full blur-2xl z-0
         bg-[radial-gradient(circle,rgba(168,85,247,0.4)_0%,transparent_70%)]
         dark:bg-[radial-gradient(circle,rgba(129,53,218,0.25)_0%,transparent_70%)]"
       />
 
       <div
-        className="absolute -right-[10%] top-[20%] w-[40vw] h-[40vw] rounded-full blur-3xl z-0
+        className="absolute -right-[10%] top-[20%] w-[40vw] h-[40vw] rounded-full blur-2xl z-0
         bg-[radial-gradient(circle,rgba(45,212,191,0.4)_0%,transparent_70%)]
         dark:bg-[radial-gradient(circle,rgba(58,218,176,0.15)_0%,transparent_70%)]"
       />
 
       <div
-        className="absolute left-[30%] -bottom-[20%] w-[60vw] h-[60vw] rounded-full blur-3xl z-0
+        className="absolute left-[30%] -bottom-[20%] w-[60vw] h-[60vw] rounded-full blur-2xl z-0
         bg-[radial-gradient(circle,rgba(249,115,22,0.3)_0%,transparent_70%)]
         dark:bg-[radial-gradient(circle,rgba(227,158,52,0.15)_0%,transparent_70%)]"
       />

@@ -50,6 +50,7 @@ export default function NotFound() {
           border border-zinc-200 bg-white/60 px-4 py-6 backdrop-blur-xl shadow-2xl
           sm:px-6 sm:py-8 md:px-12 lg:px-16
           dark:border-white/10 dark:bg-gray-600/10 dark:shadow-none transition-all duration-300"
+          style={{ WebkitBackdropFilter: 'blur(24px)' }}
         >
           <div className="flex flex-col items-center md:items-start gap-4 md:gap-6 flex-1">
             <h1 className="text-center md:text-left text-7xl sm:text-8xl md:text-9xl font-black tracking-tighter lowercase animate-in zoom-in-95 duration-700 delay-100 drop-shadow-sm dark:drop-shadow-2xl">

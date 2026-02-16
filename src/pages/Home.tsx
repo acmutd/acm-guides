@@ -89,6 +89,7 @@ export default function Home() {
             border border-zinc-200 bg-white/60 px-6 py-12 backdrop-blur-xl shadow-2xl
             sm:px-12 md:px-16 lg:px-24
             dark:border-white/10 dark:bg-gray-600/10 dark:shadow-none transition-all duration-300"
+            style={{ WebkitBackdropFilter: 'blur(24px)' }}
           >
             <h1 className="text-center text-6xl md:text-8xl font-black tracking-tighter lowercase animate-in zoom-in-95 duration-700 delay-100 drop-shadow-sm dark:drop-shadow-2xl text-zinc-900 dark:text-white">
               acm <GradientText>guides</GradientText>
