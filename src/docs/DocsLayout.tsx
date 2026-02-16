@@ -44,6 +44,13 @@ function isNodeActive(
   return node.items.some((child) => isNodeActive(child, currentPath));
 }
 
+function hasVisitedChild(node: DocNode | CategoryNode, visitedPages: Set<string>): boolean {
+  if (node.type === 'doc') {
+    return visitedPages.has(node.slug);
+  }
+  return node.items.some(child => hasVisitedChild(child, visitedPages));
+}
+
 // scroll event
 function useScrollDirection() {
   const [scrollDir, setScrollDir] = useState<'up' | 'down'>('up');
@@ -81,10 +88,16 @@ function useScrollDirection() {
 // Guides drawer (all guides from SIDEBAR_TREE)
 function MobileGuidesDrawer({ 
   open, 
-  onClose 
+  onClose,
+  visitedPages,
+  openCategories,
+  setOpenCategories,
 }: { 
   open: boolean; 
   onClose: () => void;
+  visitedPages: Set<string>;
+  openCategories: Set<string>;
+  setOpenCategories: React.Dispatch<React.SetStateAction<Set<string>>>;
 }) {
   return (
     <Dialog open={open} onClose={onClose} className="relative z-50 lg:hidden">
@@ -113,7 +126,14 @@ function MobileGuidesDrawer({
             
             <nav className="space-y-0.5">
               {SIDEBAR_TREE.map((node, i) => (
-                <SidebarItem key={i} node={node} onClose={onClose} />
+                <SidebarItem 
+                  key={i} 
+                  node={node} 
+                  onClose={onClose} 
+                  visitedPages={visitedPages}
+                  openCategories={openCategories}
+                  setOpenCategories={setOpenCategories}
+                />
               ))}
             </nav>
           </div>
@@ -251,10 +271,16 @@ function SidebarItem({
   node,
   depth = 0,
   onClose,
+  visitedPages,
+  openCategories,
+  setOpenCategories,
 }: {
   node: DocNode | CategoryNode;
   depth?: number;
   onClose?: () => void;
+  visitedPages: Set<string>;
+  openCategories?: Set<string>;
+  setOpenCategories?: React.Dispatch<React.SetStateAction<Set<string>>>;
 }) {
   const location = useLocation();
   const indentSize = 16;
@@ -281,12 +307,17 @@ function SidebarItem({
   }
 
   const isActive = isNodeActive(node, location.pathname);
+  const hasVisited = hasVisitedChild(node, visitedPages);
+  
+  // Priority ordering: manually opened/closed state > active state > visited state > depth 0
+  const isManuallySet = openCategories?.has(node.name);
+  const shouldBeOpen = isActive || (!isManuallySet && (hasVisited || depth === 0));
 
   return (
     <Disclosure
       as="div"
       key={`${node.name}-${isActive}`}
-      defaultOpen={isActive || depth === 0}
+      defaultOpen={shouldBeOpen}
       className="w-full"
     >
       {({ open }) => (
@@ -297,6 +328,15 @@ function SidebarItem({
               open ? 'text-zinc-900 dark:text-zinc-200' : ''
             )}
             style={{ paddingLeft: depth * indentSize + basePadding }}
+            onClick={() => {
+              if (setOpenCategories && !isActive) {
+                setOpenCategories(prev => {
+                  const updated = new Set(prev);
+                  updated.add(node.name);
+                  return updated;
+                });
+              }
+            }}
           >
             <span className="truncate mr-2">{stripEmojis(node.name)}</span>
             <ChevronRightIcon
@@ -316,7 +356,15 @@ function SidebarItem({
           >
             <Disclosure.Panel className="space-y-0.5 mt-1">
               {node.items.map((child, i) => (
-                <SidebarItem key={i} node={child} depth={depth + 1} onClose={onClose} />
+                <SidebarItem 
+                  key={i} 
+                  node={child} 
+                  depth={depth + 1} 
+                  onClose={onClose} 
+                  visitedPages={visitedPages}
+                  openCategories={openCategories}
+                  setOpenCategories={setOpenCategories}
+                />
               ))}
             </Disclosure.Panel>
           </Transition>
@@ -393,15 +441,40 @@ function useHeadings() {
 }
 
 function DocsContent() {
-  // Two separate state variables for the two drawers
   const [tocOpen, setTocOpen] = useState(false);
   const [guidesOpen, setGuidesOpen] = useState(false);
+  
+  const [visitedPages, setVisitedPages] = useState<Set<string>>(() => {
+    try {
+      const stored = sessionStorage.getItem('docs-visited-pages');
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
+  
+  const [openCategories, setOpenCategories] = useState<Set<string>>(new Set()); // tracking all opened categories
   
   const params = useParams();
   const splat = params['*'] ?? '';
   const isIndex = splat === '' || splat === 'workshops';
   const slug = decodeURIComponent(splat.replace(/\/+$/, ''));
   const entry = isIndex ? null : getDoc(slug);
+  
+  // current page marked as visited
+  useEffect(() => {
+    if (!isIndex && slug) {
+      setVisitedPages(prev => {
+        const updated = new Set(prev);
+        updated.add(slug);
+        try {
+          sessionStorage.setItem('docs-visited-pages', JSON.stringify([...updated]));
+        } catch {}
+        return updated;
+      });
+    }
+  }, [slug, isIndex]);
+  
   const { headings, activeId, setActiveId, contentRef } = useHeadings();
 
   const { prev, next } = useMemo(() => {
@@ -449,7 +522,13 @@ function DocsContent() {
 
           <nav className="space-y-0.5">
             {SIDEBAR_TREE.map((node, i) => (
-              <SidebarItem key={i} node={node} />
+              <SidebarItem 
+                key={i} 
+                node={node} 
+                visitedPages={visitedPages}
+                openCategories={openCategories}
+                setOpenCategories={setOpenCategories}
+              />
             ))}
           </nav>
           <div className="h-8" />
@@ -639,7 +718,10 @@ function DocsContent() {
 
       <MobileGuidesDrawer 
         open={guidesOpen} 
-        onClose={() => setGuidesOpen(false)} 
+        onClose={() => setGuidesOpen(false)}
+        visitedPages={visitedPages}
+        openCategories={openCategories}
+        setOpenCategories={setOpenCategories}
       />
     </div>
   );
