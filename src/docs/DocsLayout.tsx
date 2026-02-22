@@ -20,6 +20,7 @@ import Navbar from '../components/navbar.tsx';
 import DocsIndex from './DocIndex';
 import Pre from '../components/pre';
 import { GithubRepo } from '../components/githubRepo.tsx';
+import { Tooltip } from '../components/Tooltip.tsx';
 
 function classNames(...xs: Array<string | false | undefined>) {
   return xs.filter(Boolean).join(' ');
@@ -487,7 +488,7 @@ function DocsContent() {
     };
   }, [slug, isIndex]);
 
-  const mdxComponents = useMemo(() => ({ pre: Pre, GithubRepo }), []);
+  const mdxComponents = useMemo(() => ({ pre: Pre, GithubRepo, Tooltip }), []);
 
   const LazyDoc = useMemo(() => {
     if (!entry) return null;

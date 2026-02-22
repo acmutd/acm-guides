@@ -20,7 +20,7 @@ Welcome! In this 1-hour code-along, we will build a modern dashboard by connecti
 ***
 
 ## 📂 1. Project Structure
-We are building a **monorepo**. The React app lives at the root, and the Python API lives in its own folder.
+We are building a <Tooltip tip="A repository containing multiple packages or apps, sharing tooling and dependencies">**monorepo**</Tooltip> . The React app lives at the root, and the Python API lives in its own folder.
 
 ```text
 ├── api/                   # 🐍 FastAPI backend
@@ -110,7 +110,7 @@ uvicorn main:app --reload --port 8000
 *   *Note: `--reload` ensures the server restarts automatically when you save changes.*
 
 ### ⚛️ Terminal 2: Frontend (React)
-In the root folder, start the Vite server.
+In the root folder, start the <Tooltip tip="A fast frontend build tool and dev server for modern JS frameworks">Vite</Tooltip> server.
 ```bash
 npm run dev
 ```
@@ -158,13 +158,13 @@ py -m venv .venv
 On Mac/Linux, try `python3`.
 
 ### "Port 8000 already in use"
-If another process is using port 8000, start uvicorn on a different port:
+If another process is using port 8000, start <Tooltip tip="An asynchronous web gateway server interface for Python asynchronous apps like FastAPI">uvicorn</Tooltip> on a different port:
 ```bash
 uvicorn main:app --reload --port 8001
 ```
-**Important:** If you do this, you must update `vite.config.js` to proxy requests to port `8001` instead of `8000`.
+**Important:** If you do this, you must update `vite.config.js` to <Tooltip tip="We want to forward API requests from frontend to backend to avoid CORS issues">proxy</Tooltip> requests to port `8001` instead of `8000`.
 
 ### Frontend says "Network Error" or 404
 1.  Ensure the backend terminal is actually running.
 2.  Check `vite.config.js` to ensure the `proxy` is set up correctly.
-3.  If you aren't using a proxy, you may need to enable **CORS** in `main.py`.
+3.  If you aren't using a proxy, you may need to enable <Tooltip tip="Cross-Origin Resource Sharing (or CORS) is a browser security rule that prevents frontend on a port from talking to backend on a different port unless backend explicitly allows it.">**CORS**</Tooltip> in `main.py`.
