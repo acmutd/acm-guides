@@ -159,6 +159,93 @@ Open [http://localhost:8000/api/status](http://localhost:8000/api/status) in you
 4.  Refresh your **backend** (localhost:8000/api/status). You should see your new data appear!
 
 ### Task 3: Integrate the API with the Frontend
+Now we will replace the hardcoded sample data with real data from our FastAPI backend.
+
+**File**: `src/App.jsx`
+
+Right now, the app is using `status.sample.json`. We are going to change this to fetch live data from `/api/status`, our backend endpoint that we just modified!
+
+#### **Step 1: Add Loading and Error State**
+Underneath the `Step 1` comment, add these two lines of state:
+```js
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState(null);
+```
+This lets us:
+- Show a loading message while fetching the data from the backend endpoint
+- Show an error message if the backend request fails
+
+#### **Step 2: Create the `fetchStatus` function**
+Underneath the `Step 2` comment, bring in this async function:
+```js
+const fetchStatus = async () => {
+  try {
+    setLoading(true); // Turns loading on
+    setError(null); // Clears old errors
+
+    const response = await fetch("/api/status"); // Fetches data from backend
+
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`); // Handles errors safely
+    }
+
+    const json = await response.json();
+    setData(json); // Updates state
+  } catch (err) {
+    setError(err.message); // Some more error handling
+  } finally {
+    setLoading(false); // Turns loading off
+  }
+};
+```
+
+#### **Step 3: Fetch Data on Page Load**
+Underneath the `Step 3` comment, add this <Tooltip tip="A useEffect is a hook that tells React to run a specific piece of code after the component renders on the screen">**`useEffect`**</Tooltip>:
+```js
+useEffect(() => {
+  fetchStatus();
+}, []);
+```
+Now when the page loads, it automatically pulls data from the FastAPI backend
+
+#### **Step 4: Replace "Fake Refresh" With Real Refresh**
+Update the button inside the header. The button code is on Line xx in the same file.
+```js
+onClick={fetchStatus}
+disabled={loading}
+```
+
+And then, update the button text:
+```js
+{loading ? "Loading..." : "Refresh"}
+```
+
+Now, the button uses the states declared from the `fetchStatus` function to show exactly when the function is calling data and exactly when it stops. That's a pretty accurate button!
+We also change the button text based on what the loading state is, so if the function is running, the button will display "Loading", and if it's done, it'll display "Refresh" automatically!
+
+#### **Step 5: Show Loading and Error UI**
+Inside `<main>`, add conditional rendering:
+```js
+{loading && <div className="loading">Loading dashboard...</div>}
+
+{error && <div className="error">Error: {error}</div>}
+
+{!loading && !error &&
+  (data?.widgets ?? []).map((w) => (
+    <WidgetCard
+      key={w.id}
+      label={w.label}
+      value={w.value}
+      hint={w.hint}
+    />
+  ))
+}
+```
+Fully replace the contents of <main></main> with the above.
+Now the dashboard:
+- Shows a loading message while fetching
+- Shows a helpful error if something breaks
+- Only renders widgets when data is valid
 
 ### Task 4: Enhance the Frontend
 **File:** `src/App.jsx`
