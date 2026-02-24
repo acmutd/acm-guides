@@ -120,26 +120,35 @@ npm run dev
 
 ## 📝 5. Workshop Tasks
 
-### Task 0: The "Contract"
+### Task 1: The API Endpoint
 Open [http://localhost:8000/api/status](http://localhost:8000/api/status) in your browser.
 *   This JSON is the "Source of Truth."
-*   Our React app is programmed to display whatever this endpoint returns.
+*   Our React app will be progammed to display whatever this endpoint returns after Task 2!
 
-### Task 1: Update the Backend
+### Task 2: Update the Backend
 **File:** `api/main.py`
 1.  Find the `widgets` list in the code.
-2.  Add a new dictionary item to the list (e.g., a "Server Status" or "Weather" widget).
+2.  Add a new dictionary item to the list (e.g., a "Server Status" or "Weather" widget). An example is provided below:
+```json
+{
+  "id": "serverStatus",
+  "label": "Server Status",
+  "value": "All Systems Operational!",
+}
+```
 3.  **Save** the file.
-4.  Refresh your **Frontend** (localhost:5173). You should see the new card appear automatically!
+4.  Refresh your **backend** (localhost:8000/api/status). You should see your new data appear!
 
-### Task 2: Enhance the Frontend
+### Task 3: Integrate the API with the Frontend
+
+### Task 4: Enhance the Frontend
 **File:** `src/App.jsx`
 Currently, the app might crash if the API is slow. Let's make it robust:
 1.  **Add Loading State:** create a `isLoading` state variable. Show a "Loading..." spinner while fetching.
 2.  **Add Error Handling:** Wrap the fetch in a `try/catch` block. If the API fails, show an error message.
 3.  **Add Refresh Button:** Create a `<button>` that re-runs the `fetch` function on click.
 
-### Task 3: Make it Yours
+### Task 5: Make it Yours
 **File:** `src/config.js` (or similar)
 Time to customize the dashboard!
 *   Change the dashboard title.
