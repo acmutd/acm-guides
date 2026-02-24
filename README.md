@@ -1,12 +1,7 @@
 # acm guides
-
----
-
-
-
----
-
 ACM’s documentation hub for workshop guides, tutorials, and practical resources - **built by students, for students**. 
+
+<img width="2559" height="1269" alt="image" src="https://github.com/user-attachments/assets/977b45db-ef8a-445d-a65b-b6bebb1cc45d" />
 
 ## What you’ll find here
 - Workshop guides that help you go from “I’ve heard of this” to “I can build it.” 
