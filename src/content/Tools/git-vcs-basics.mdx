@@ -1,58 +1,63 @@
 export const meta = {
-  title: "Git & Version Control Basics",
+  title: 'Git & Version Control Basics',
   description: "Dev's guide to using & understanding Git & VCS",
-  updated: "2026-02-09",
+  updated: '2026-02-09',
 };
 
-***
+---
 
 Welcome! In this guide, we will set up **Git**, the industry-standard tool for tracking code changes and collaborating with other developers.
 
 **What you’ll learn:**
-* **The Concept:** Understanding Version Control Systems (VCS) as "save points."
-* **The Setup:** How to install and configure Git on Windows and macOS.
-* **The Commands:** The essential cheat sheet for your daily workflow.
 
-***
+- **The Concept:** Understanding Version Control Systems (VCS) as "save points."
+- **The Setup:** How to install and configure Git on Windows and macOS.
+- **The Commands:** The essential cheat sheet for your daily workflow.
+
+---
 
 ## 🧠 1. What is Version Control?
+
 Think of **Git** as a time machine for your code. It allows you to:
+
 1.  **Track History:** See exactly who changed what line of code and when.
 2.  **Collaborate:** Merge work from multiple people into one project without overwriting files.
 3.  **Revert:** Broke the app? Jump back to a previous "save point" (commit) instantly.
 
 ### The Workflow
+
 Visualizing where your code lives is half the battle.
 
 | Stage                 | Description                                                       |
-|:----------------------|:------------------------------------------------------------------|
+| :-------------------- | :---------------------------------------------------------------- |
 | **Working Directory** | The files you are currently editing in VS Code.                   |
-| **Staging Area**      | The "on-deck" circle. Files you are *about* to save.              |
+| **Staging Area**      | The "on-deck" circle. Files you are _about_ to save.              |
 | **Local Repository**  | Your private history of saved snapshots (commits) on your laptop. |
 | **Remote Repository** | The cloud version (GitHub/GitLab) where the team shares code.     |
 
-***
+---
 
 ## 💿 2. Installation
+
 Before we start, verify if you already have Git installed.
 
 **Verification Command:**
+
 ```bash
 git --version
 ```
 
-*If you see a version number (e.g., `git version 2.40.0`), you are good to go! If not, follow the steps below.*
+_If you see a version number (e.g., `git version 2.40.0`), you are good to go! If not, follow the steps below._
 
 ### 🪟 Windows
 
 1. **Download:** Go to [git-scm.com/download/win](https://git-scm.com/download/win).
 2. **Run Installer:** Download the "Standalone Installer" (64-bit).
 3. **The Setup Wizard:**
-* Keep hitting "Next" through the defaults.
-* *Critical:* When asked about the default editor, select **Visual Studio Code**.
-* *Critical:* Ensure "Git from the command line and also from 3rd-party software" is selected.
 
-
+- Keep hitting "Next" through the defaults.
+- _Critical:_ When asked about the default editor, select **Visual Studio Code**.
+- _Critical:_ Ensure "Git from the command line and also from 3rd-party software" is selected.
 
 ### 🍎 macOS
 
@@ -105,7 +110,7 @@ These are the commands you will use 99% of the time.
 ### Starting Out
 
 | Action    | Command           | Description                                           |
-|-----------|-------------------|-------------------------------------------------------|
+| --------- | ----------------- | ----------------------------------------------------- |
 | **Clone** | `git clone <URL>` | Download an existing repo from GitHub to your laptop. |
 | **Init**  | `git init`        | Turn your current folder into a brand new Git repo.   |
 
@@ -120,7 +125,7 @@ Move changes to the staging area.
 git add .
 ```
 
-*(The `.` means "add all changed files". You can also specify a filename).*
+_(The `.` means "add all changed files". You can also specify a filename)._
 
 **2. Commit (Save)**
 Take a snapshot of the staged files.
@@ -129,7 +134,7 @@ Take a snapshot of the staged files.
 git commit -m "Fixed the login bug"
 ```
 
-*(Always write a clear message describing what you changed).*
+_(Always write a clear message describing what you changed)._
 
 **3. Push (Upload)**
 Send your commits to the cloud (GitHub).
@@ -162,16 +167,16 @@ git log --oneline
 
 You are trying to run a git command inside a folder that isn't tracked.
 
-* **Fix:** `cd` into the correct folder where you ran `git init` or `git clone`.
+- **Fix:** `cd` into the correct folder where you ran `git init` or `git clone`.
 
 ### "Permission denied (publickey)"
 
 GitHub doesn't recognize your computer.
 
-* **Fix:** You likely need to set up an SSH key or use a Personal Access Token. For beginners, try cloning using the **HTTPS** URL instead of the **SSH** URL.
+- **Fix:** You likely need to set up an SSH key or use a Personal Access Token. For beginners, try cloning using the **HTTPS** URL instead of the **SSH** URL.
 
 ### "Merge conflict"
 
 Two people changed the same line of code. Git doesn't know whose version to keep.
 
-* **Fix:** Open the file in VS Code. You will see highlighted sections showing "Current Change" vs "Incoming Change". Choose one, save the file, then `git add .` and `git commit` again.
+- **Fix:** Open the file in VS Code. You will see highlighted sections showing "Current Change" vs "Incoming Change". Choose one, save the file, then `git add .` and `git commit` again.

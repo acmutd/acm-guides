@@ -27,10 +27,12 @@ function classNames(...xs: Array<string | false | undefined>) {
 }
 
 function stripEmojis(str: string) {
-  return str
-    // this might error in ur IDE, it works tho trust
-    .replace(/\p{Extended_Pictographic}|\uFE0F/gu, '')
-    .trim();
+  return (
+    str
+      // this might error in ur IDE, it works tho trust
+      .replace(/\p{Extended_Pictographic}|\uFE0F/gu, '')
+      .trim()
+  );
 }
 
 function isNodeActive(
@@ -39,17 +41,22 @@ function isNodeActive(
 ): boolean {
   if (node.type === 'doc') {
     const nodePath = `/docs/${node.slug}`.replace(/\/$/, '').toLowerCase();
-    const activePath = decodeURIComponent(currentPath).replace(/\/$/, '').toLowerCase();
+    const activePath = decodeURIComponent(currentPath)
+      .replace(/\/$/, '')
+      .toLowerCase();
     return nodePath === activePath;
   }
   return node.items.some((child) => isNodeActive(child, currentPath));
 }
 
-function hasVisitedChild(node: DocNode | CategoryNode, visitedPages: Set<string>): boolean {
+function hasVisitedChild(
+  node: DocNode | CategoryNode,
+  visitedPages: Set<string>
+): boolean {
   if (node.type === 'doc') {
     return visitedPages.has(node.slug);
   }
-  return node.items.some(child => hasVisitedChild(child, visitedPages));
+  return node.items.some((child) => hasVisitedChild(child, visitedPages));
 }
 
 // scroll event
@@ -87,14 +94,14 @@ function useScrollDirection() {
 }
 
 // Guides drawer (all guides from SIDEBAR_TREE)
-function MobileGuidesDrawer({ 
-  open, 
+function MobileGuidesDrawer({
+  open,
   onClose,
   visitedPages,
   openCategories,
   setOpenCategories,
-}: { 
-  open: boolean; 
+}: {
+  open: boolean;
   onClose: () => void;
   visitedPages: Set<string>;
   openCategories: Set<string>;
@@ -103,7 +110,7 @@ function MobileGuidesDrawer({
   return (
     <Dialog open={open} onClose={onClose} className="relative z-50 lg:hidden">
       <div className="fixed inset-0 bg-black/50" />
-      
+
       <div className="fixed inset-0 flex">
         <Dialog.Panel className="relative w-full max-w-xs bg-white dark:bg-black">
           <div className="h-full overflow-y-auto p-6">
@@ -115,22 +122,32 @@ function MobileGuidesDrawer({
               >
                 All Guides
               </Link>
-              <button 
+              <button
                 onClick={onClose}
                 className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
               >
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
-            
+
             <nav className="space-y-0.5">
               {SIDEBAR_TREE.map((node, i) => (
-                <SidebarItem 
-                  key={i} 
-                  node={node} 
-                  onClose={onClose} 
+                <SidebarItem
+                  key={i}
+                  node={node}
+                  onClose={onClose}
                   visitedPages={visitedPages}
                   openCategories={openCategories}
                   setOpenCategories={setOpenCategories}
@@ -144,14 +161,14 @@ function MobileGuidesDrawer({
   );
 }
 
-function MobileTOCDrawer({ 
-  open, 
+function MobileTOCDrawer({
+  open,
   onClose,
   headings,
   activeId,
-  setActiveId
-}: { 
-  open: boolean; 
+  setActiveId,
+}: {
+  open: boolean;
   onClose: () => void;
   headings: any[];
   activeId: string;
@@ -160,7 +177,7 @@ function MobileTOCDrawer({
   return (
     <Dialog open={open} onClose={onClose} className="relative z-50 lg:hidden">
       <div className="fixed inset-0 bg-black/50" />
-      
+
       <div className="fixed inset-0 flex justify-end">
         <Dialog.Panel className="relative w-full max-w-xs bg-white dark:bg-black">
           <div className="h-full overflow-y-auto p-6">
@@ -168,18 +185,30 @@ function MobileTOCDrawer({
               <div className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-white">
                 On this page
               </div>
-              <button 
+              <button
                 onClick={onClose}
                 className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
               >
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
-            
+
             {headings.length === 0 ? (
-              <div className="text-sm text-zinc-400 dark:text-zinc-500 italic">No subsections</div>
+              <div className="text-sm text-zinc-400 dark:text-zinc-500 italic">
+                No subsections
+              </div>
             ) : (
               <ul className="space-y-3">
                 {headings.map((h) => (
@@ -194,7 +223,9 @@ function MobileTOCDrawer({
                       )}
                       onClick={(e) => {
                         e.preventDefault();
-                        document.getElementById(h.id)?.scrollIntoView({ behavior: 'smooth' });
+                        document
+                          .getElementById(h.id)
+                          ?.scrollIntoView({ behavior: 'smooth' });
                         setActiveId(h.id);
                         onClose();
                       }}
@@ -213,22 +244,24 @@ function MobileTOCDrawer({
 }
 
 // Mobile header - just title and guide controls (ToC + Guides drawer)
-function MobileDocHeader({ 
-  entry, 
+function MobileDocHeader({
+  entry,
   onTocOpen,
   onGuidesOpen,
-}: { 
+}: {
   entry: any;
   onTocOpen: () => void;
   onGuidesOpen: () => void;
-}) {  
+}) {
   const scrollDir = useScrollDirection();
 
   return (
-      <div className={classNames(
-        "lg:hidden sticky top-20 z-10 -mx-4 sm:-mx-6 px-4 sm:px-6 py-4 bg-white/95 dark:bg-black/95 backdrop-blur-xl transition-transform duration-300",
+    <div
+      className={classNames(
+        'lg:hidden sticky top-20 z-10 -mx-4 sm:-mx-6 px-4 sm:px-6 py-4 bg-white/95 dark:bg-black/95 backdrop-blur-xl transition-transform duration-300',
         scrollDir === 'down' ? '-translate-y-full' : 'translate-y-0'
-      )}>
+      )}
+    >
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
           <div className="text-[10px] font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400 mb-1.5">
@@ -238,28 +271,48 @@ function MobileDocHeader({
             {entry.meta.title}
           </h1>
         </div>
-        
+
         {/* Two buttons - Guides and ToC */}
         <div className="flex items-center gap-2 flex-shrink-0">
           {/* Guides button */}
-          <button 
+          <button
             onClick={onGuidesOpen}
             className="p-2 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/5 rounded-lg transition-colors"
             aria-label="Open guides"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+              />
             </svg>
           </button>
-          
+
           {/* ToC button */}
-          <button 
+          <button
             onClick={onTocOpen}
             className="p-2 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/5 rounded-lg transition-colors"
             aria-label="Table of contents"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h7"
+              />
             </svg>
           </button>
         </div>
@@ -309,10 +362,11 @@ function SidebarItem({
 
   const isActive = isNodeActive(node, location.pathname);
   const hasVisited = hasVisitedChild(node, visitedPages);
-  
+
   // Priority ordering: manually opened/closed state > active state > visited state > depth 0
   const isManuallySet = openCategories?.has(node.name);
-  const shouldBeOpen = isActive || (!isManuallySet && (hasVisited || depth === 0));
+  const shouldBeOpen =
+    isActive || (!isManuallySet && (hasVisited || depth === 0));
 
   return (
     <Disclosure
@@ -331,7 +385,7 @@ function SidebarItem({
             style={{ paddingLeft: depth * indentSize + basePadding }}
             onClick={() => {
               if (setOpenCategories && !isActive) {
-                setOpenCategories(prev => {
+                setOpenCategories((prev) => {
                   const updated = new Set(prev);
                   updated.add(node.name);
                   return updated;
@@ -357,11 +411,11 @@ function SidebarItem({
           >
             <Disclosure.Panel className="space-y-0.5 mt-1">
               {node.items.map((child, i) => (
-                <SidebarItem 
-                  key={i} 
-                  node={child} 
-                  depth={depth + 1} 
-                  onClose={onClose} 
+                <SidebarItem
+                  key={i}
+                  node={child}
+                  depth={depth + 1}
+                  onClose={onClose}
                   visitedPages={visitedPages}
                   openCategories={openCategories}
                   setOpenCategories={setOpenCategories}
@@ -444,7 +498,7 @@ function useHeadings() {
 function DocsContent() {
   const [tocOpen, setTocOpen] = useState(false);
   const [guidesOpen, setGuidesOpen] = useState(false);
-  
+
   const [visitedPages, setVisitedPages] = useState<Set<string>>(() => {
     try {
       const stored = sessionStorage.getItem('docs-visited-pages');
@@ -453,29 +507,32 @@ function DocsContent() {
       return new Set();
     }
   });
-  
+
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set()); // tracking all opened categories
-  
+
   const params = useParams();
   const splat = params['*'] ?? '';
   const isIndex = splat === '' || splat === 'workshops';
   const slug = decodeURIComponent(splat.replace(/\/+$/, ''));
   const entry = isIndex ? null : getDoc(slug);
-  
+
   // current page marked as visited
   useEffect(() => {
     if (!isIndex && slug) {
-      setVisitedPages(prev => {
+      setVisitedPages((prev) => {
         const updated = new Set(prev);
         updated.add(slug);
         try {
-          sessionStorage.setItem('docs-visited-pages', JSON.stringify([...updated]));
+          sessionStorage.setItem(
+            'docs-visited-pages',
+            JSON.stringify([...updated])
+          );
         } catch {}
         return updated;
       });
     }
   }, [slug, isIndex]);
-  
+
   const { headings, activeId, setActiveId, contentRef } = useHeadings();
 
   const { prev, next } = useMemo(() => {
@@ -523,9 +580,9 @@ function DocsContent() {
 
           <nav className="space-y-0.5">
             {SIDEBAR_TREE.map((node, i) => (
-              <SidebarItem 
-                key={i} 
-                node={node} 
+              <SidebarItem
+                key={i}
+                node={node}
                 visitedPages={visitedPages}
                 openCategories={openCategories}
                 setOpenCategories={setOpenCategories}
@@ -562,7 +619,7 @@ function DocsContent() {
                   <>
                     {/* Mobile Header with guide controls */}
                     {!isIndex && entry && (
-                      <MobileDocHeader 
+                      <MobileDocHeader
                         entry={entry}
                         onTocOpen={() => setTocOpen(true)}
                         onGuidesOpen={() => setGuidesOpen(true)}
@@ -614,7 +671,9 @@ function DocsContent() {
                         dark:[&_pre_code]:bg-transparent dark:[&_pre_code]:text-zinc-100
                       "
                       >
-                        <h1 className="mb-4 hidden lg:block">{entry.meta.title}</h1>
+                        <h1 className="mb-4 hidden lg:block">
+                          {entry.meta.title}
+                        </h1>
                         {LazyDoc ? (
                           // eslint-disable-next-line react-hooks/static-components
                           <LazyDoc components={mdxComponents} />
@@ -672,16 +731,11 @@ function DocsContent() {
               On this page
             </div>
             {headings.length === 0 ? (
-              <div className="text-sm text-zinc-400 italic">
-                No subsections
-              </div>
+              <div className="text-sm text-zinc-400 italic">No subsections</div>
             ) : (
               <ul className="space-y-2.5 text-sm mb-8">
                 {headings.map((h) => (
-                  <li
-                    key={h.id}
-                    style={{ paddingLeft: (h.level - 2) * 20 }}
-                  >
+                  <li key={h.id} style={{ paddingLeft: (h.level - 2) * 20 }}>
                     <a
                       href={`#${h.id}`}
                       className={classNames(
@@ -709,7 +763,7 @@ function DocsContent() {
       )}
 
       {/* Mobile Drawers */}
-      <MobileTOCDrawer 
+      <MobileTOCDrawer
         open={tocOpen}
         onClose={() => setTocOpen(false)}
         headings={headings}
@@ -717,8 +771,8 @@ function DocsContent() {
         setActiveId={setActiveId}
       />
 
-      <MobileGuidesDrawer 
-        open={guidesOpen} 
+      <MobileGuidesDrawer
+        open={guidesOpen}
         onClose={() => setGuidesOpen(false)}
         visitedPages={visitedPages}
         openCategories={openCategories}

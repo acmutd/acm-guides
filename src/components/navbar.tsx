@@ -63,7 +63,11 @@ export function GradientText({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function Navbar({ hideMobileMenu = false }: { hideMobileMenu?: boolean }) {
+export default function Navbar({
+  hideMobileMenu = false,
+}: {
+  hideMobileMenu?: boolean;
+}) {
   const [top, setTop] = useState(true);
   const { theme, toggleTheme } = useTheme();
 
@@ -93,9 +97,7 @@ export default function Navbar({ hideMobileMenu = false }: { hideMobileMenu?: bo
                   alt="ACM Logo"
                   className="h-32 w-32 object-contain transition-all duration-300 invert dark:invert-0"
                 />
-                <div className="block text-2xl font-extralight">
-                  |
-                </div>
+                <div className="block text-2xl font-extralight">|</div>
                 <div className="flex flex-col leading-none">
                   <span className="font-black tracking-tighter text-xl text-zinc-900 dark:text-white">
                     acm <GradientText>guides</GradientText>
@@ -152,49 +154,49 @@ export default function Navbar({ hideMobileMenu = false }: { hideMobileMenu?: bo
           {!hideMobileMenu && (
             <>
               {open && (
-                <Disclosure.Button 
+                <Disclosure.Button
                   className="fixed left-0 right-0 bottom-0 top-20 z-40 bg-black/20 dark:bg-black/40 md:hidden min-h-screen"
                   aria-label="Close menu"
                 />
               )}
 
               <Disclosure.Panel className="fixed inset-x-0 top-20 z-50 md:hidden bg-white/90 backdrop-blur-xl border-t border-zinc-200 dark:bg-black/70 dark:border-white/10">
-            <div className="mx-auto max-w-6xl px-6 py-4 flex flex-col gap-2">
-              {links.map((item) => (
-                <Disclosure.Button
-                  key={item.to}
-                  as={NavLink}
-                  to={item.to}
-                  end={item.to === '/'}
-                  className={({ isActive }: { isActive: boolean }) =>
-                    navLinkClass(isActive)
-                  }
-                >
-                  {item.name}
-                </Disclosure.Button>
-              ))}
+                <div className="mx-auto max-w-6xl px-6 py-4 flex flex-col gap-2">
+                  {links.map((item) => (
+                    <Disclosure.Button
+                      key={item.to}
+                      as={NavLink}
+                      to={item.to}
+                      end={item.to === '/'}
+                      className={({ isActive }: { isActive: boolean }) =>
+                        navLinkClass(isActive)
+                      }
+                    >
+                      {item.name}
+                    </Disclosure.Button>
+                  ))}
 
-              <div className="h-px bg-zinc-200 dark:bg-white/10 my-2" />
+                  <div className="h-px bg-zinc-200 dark:bg-white/10 my-2" />
 
-              <a
-                href="https://github.com/acmutd/acm-guides"
-                target="_blank"
-                rel="noreferrer"
-                className="flex w-full items-center justify-between rounded-full px-4 py-2 text-[11px] font-black uppercase tracking-widest text-zinc-500 hover:bg-zinc-900/5 hover:text-zinc-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white transition-all"
-              >
-                <span>GitHub Repo</span>
-                <ArrowTopRightOnSquareIcon className="h-3 w-3" />
-              </a>
+                  <a
+                    href="https://github.com/acmutd/acm-guides"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex w-full items-center justify-between rounded-full px-4 py-2 text-[11px] font-black uppercase tracking-widest text-zinc-500 hover:bg-zinc-900/5 hover:text-zinc-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white transition-all"
+                  >
+                    <span>GitHub Repo</span>
+                    <ArrowTopRightOnSquareIcon className="h-3 w-3" />
+                  </a>
 
-              <button
-                onClick={toggleTheme}
-                className="flex w-full items-center justify-between rounded-full px-4 py-2 text-[11px] font-black uppercase tracking-widest text-zinc-500 hover:bg-zinc-900/5 hover:text-zinc-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white transition-all"
-              >
-                <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
-                {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-              </button>
-            </div>
-          </Disclosure.Panel>
+                  <button
+                    onClick={toggleTheme}
+                    className="flex w-full items-center justify-between rounded-full px-4 py-2 text-[11px] font-black uppercase tracking-widest text-zinc-500 hover:bg-zinc-900/5 hover:text-zinc-900 dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white transition-all"
+                  >
+                    <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+                    {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+                  </button>
+                </div>
+              </Disclosure.Panel>
             </>
           )}
         </>

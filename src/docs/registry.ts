@@ -1,12 +1,12 @@
 export type DocNode = {
-  type: "doc";
+  type: 'doc';
   title: string;
   slug: string;
   description?: string;
 };
 
 export type CategoryNode = {
-  type: "category";
+  type: 'category';
   name: string;
   items: (DocNode | CategoryNode)[];
 };
@@ -17,24 +17,24 @@ export type DocEntry = {
   load: () => Promise<never>;
 };
 
-const modules = import.meta.glob("../content/**/*.mdx");
+const modules = import.meta.glob('../content/**/*.mdx');
 
 type MdxMeta = { title?: string; description?: string; updated?: string };
-const metas = import.meta.glob("../content/**/*.mdx", {
+const metas = import.meta.glob('../content/**/*.mdx', {
   eager: true,
-  import: "meta",
+  import: 'meta',
 }) as Record<string, MdxMeta | undefined>;
 
 function getSlug(path: string) {
-  return path.replace(/^\.\.\/content\//, "").replace(/\.mdx$/, "");
+  return path.replace(/^\.\.\/content\//, '').replace(/\.mdx$/, '');
 }
 
 function formatTitle(raw: string) {
   return raw
-    .replace(/^\d+-/, "")
-    .split("-")
+    .replace(/^\d+-/, '')
+    .split('-')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+    .join(' ');
 }
 
 export const ALL_DOCS: DocEntry[] = [];
@@ -42,7 +42,7 @@ export const SIDEBAR_TREE: (DocNode | CategoryNode)[] = [];
 
 for (const path in modules) {
   const slug = getSlug(path);
-  const parts = slug.split("/");
+  const parts = slug.split('/');
   const filename = parts.pop()!;
 
   const fm = metas[path];
@@ -62,12 +62,12 @@ for (const path in modules) {
   let currentLevel = SIDEBAR_TREE;
   parts.forEach((folder) => {
     let existingFolder = currentLevel.find(
-      (n) => n.type === "category" && n.name === formatTitle(folder)
+      (n) => n.type === 'category' && n.name === formatTitle(folder)
     ) as CategoryNode;
 
     if (!existingFolder) {
       existingFolder = {
-        type: "category",
+        type: 'category',
         name: formatTitle(folder),
         items: [],
       };
@@ -77,7 +77,7 @@ for (const path in modules) {
   });
 
   currentLevel.push({
-    type: "doc",
+    type: 'doc',
     title: entry.meta.title,
     slug,
     description: entry.meta.description,
@@ -91,11 +91,11 @@ export function getDoc(slug: string) {
 }
 
 function updatedKey(doc: DocEntry) {
-  return doc.meta.updated ?? "";
+  return doc.meta.updated ?? '';
 }
 
 export function getRecentWorkshops(count = 3) {
-  let workshops = ALL_DOCS
+  let workshops = ALL_DOCS;
   if (workshops.length === 0) workshops = ALL_DOCS;
 
   return workshops

@@ -63,8 +63,8 @@ export default function NotFound() {
               </h2>
 
               <p className="text-center md:text-left text-base sm:text-lg text-zinc-700 font-medium leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 dark:text-zinc-300">
-                Looks like Peechi hasn't finished building this guide yet.
-                Let's get you back to learning!
+                Looks like Peechi hasn't finished building this guide yet. Let's
+                get you back to learning!
               </p>
             </div>
 
@@ -85,8 +85,8 @@ export default function NotFound() {
           </div>
 
           <div className="flex-shrink-0 animate-float mt-4 md:mt-0">
-            <img 
-              src="/Peechi_UnderConstruction.png" 
+            <img
+              src="/Peechi_UnderConstruction.png"
               alt="Peechi working on construction"
               className="w-48 sm:w-56 md:w-64 lg:w-72 xl:w-80 h-auto max-w-full"
             />

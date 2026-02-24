@@ -26,43 +26,58 @@
     color: rgb(var(--acm-text));
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-family: 'Gilroy', ui-sans-serif, system-ui, -apple-system,
+      BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 400;
   }
 
   body::before {
-    content: "";
+    content: '';
     position: fixed;
     inset: 0;
     pointer-events: none;
     opacity: 0.38;
 
     background-image:
-      linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px);
+      linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
     background-size: 44px 44px;
 
-    mask-image: radial-gradient(75% 55% at 50% 25%, black 55%, transparent 100%);
+    mask-image: radial-gradient(
+      75% 55% at 50% 25%,
+      black 55%,
+      transparent 100%
+    );
     z-index: 0;
   }
 
   body::after {
-    content: "";
+    content: '';
     position: fixed;
     inset: 0;
     pointer-events: none;
 
     background:
-      radial-gradient(650px 450px at 50% -10%,
+      radial-gradient(
+        650px 450px at 50% -10%,
         rgba(255, 126, 24, 0.18),
-        rgba(255, 126, 24, 0) 60%),
-      radial-gradient(520px 420px at 10% 25%,
-        rgba(255,255,255,0.08),
-        rgba(255,255,255,0) 62%),
-      radial-gradient(520px 420px at 95% 85%,
-        rgba(255, 180, 80, 0.10),
-        rgba(255, 180, 80, 0) 62%),
-      radial-gradient(1200px 900px at 50% 60%,
-        rgba(0,0,0,0),
-        rgba(0,0,0,0.75) 70%);
+        rgba(255, 126, 24, 0) 60%
+      ),
+      radial-gradient(
+        520px 420px at 10% 25%,
+        rgba(255, 255, 255, 0.08),
+        rgba(255, 255, 255, 0) 62%
+      ),
+      radial-gradient(
+        520px 420px at 95% 85%,
+        rgba(255, 180, 80, 0.1),
+        rgba(255, 180, 80, 0) 62%
+      ),
+      radial-gradient(
+        1200px 900px at 50% 60%,
+        rgba(0, 0, 0, 0),
+        rgba(0, 0, 0, 0.75) 70%
+      );
 
     opacity: 1;
     z-index: 0;
@@ -82,15 +97,15 @@
     height: 10px;
   }
   *::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.12);
-    border: 2px solid rgba(0,0,0,0.9);
+    background: rgba(255, 255, 255, 0.12);
+    border: 2px solid rgba(0, 0, 0, 0.9);
     border-radius: 999px;
   }
   *::-webkit-scrollbar-thumb:hover {
-    background: rgba(255,255,255,0.18);
+    background: rgba(255, 255, 255, 0.18);
   }
   *::-webkit-scrollbar-corner {
-    background: rgba(0,0,0,0);
+    background: rgba(0, 0, 0, 0);
   }
 
   :focus-visible {
@@ -130,7 +145,9 @@
 
   .acm-kbd {
     @apply rounded-md border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+      'Courier New', monospace;
   }
 
   .acm-callout {
@@ -143,75 +160,79 @@
     line-height: 1.75;
   }
 
-  .acm-prose :where(a):not(:where([class~="not-prose"] *)) {
+  .acm-prose :where(a):not(:where([class~='not-prose'] *)) {
     color: rgba(255, 180, 80, 0.95);
     text-decoration: none;
     font-weight: 600;
   }
-  .acm-prose :where(a:hover):not(:where([class~="not-prose"] *)) {
+  .acm-prose :where(a:hover):not(:where([class~='not-prose'] *)) {
     color: rgba(255, 205, 140, 0.98);
     text-decoration: underline;
     text-underline-offset: 4px;
   }
 
-  .acm-prose :where(h1,h2,h3):not(:where([class~="not-prose"] *)) {
+  .acm-prose :where(h1, h2, h3):not(:where([class~='not-prose'] *)) {
     letter-spacing: -0.015em;
   }
 
-  .acm-prose :where(:not(pre) > code):not(:where([class~="not-prose"] *)) {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.10);
+  .acm-prose :where(:not(pre) > code):not(:where([class~='not-prose'] *)) {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 0.5rem;
     padding: 0.12rem 0.4rem;
     color: rgba(255, 210, 160, 0.95);
     font-weight: 500;
   }
-  .acm-prose :where(:not(pre) > code):not(:where([class~="not-prose"] *))::before,
-  .acm-prose :where(:not(pre) > code):not(:where([class~="not-prose"] *))::after {
-    content: "";
+  .acm-prose
+    :where(:not(pre) > code):not(:where([class~='not-prose'] *))::before,
+  .acm-prose
+    :where(:not(pre) > code):not(:where([class~='not-prose'] *))::after {
+    content: '';
   }
 
-  .acm-prose :where(pre):not(:where([class~="not-prose"] *)) {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.10);
+  .acm-prose :where(pre):not(:where([class~='not-prose'] *)) {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 1rem;
     padding: 1rem 1rem;
-    box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 18px 70px rgba(0,0,0,0.45);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.06),
+      0 18px 70px rgba(0, 0, 0, 0.45);
     overflow-x: auto;
   }
-  .acm-prose :where(pre code):not(:where([class~="not-prose"] *)) {
+  .acm-prose :where(pre code):not(:where([class~='not-prose'] *)) {
     background: transparent;
     border: 0;
     padding: 0;
-    color: rgba(255,255,255,0.88);
+    color: rgba(255, 255, 255, 0.88);
     font-weight: 450;
   }
   .acm-prose :where(pre code)::before,
   .acm-prose :where(pre code)::after {
-    content: "";
+    content: '';
   }
 
-  .acm-prose :where(blockquote):not(:where([class~="not-prose"] *)) {
+  .acm-prose :where(blockquote):not(:where([class~='not-prose'] *)) {
     border-left-color: rgba(255, 126, 24, 0.35);
     background: rgba(255, 126, 24, 0.08);
     border-radius: 0.75rem;
     padding: 0.85rem 1rem;
   }
 
-  .acm-prose :where(table):not(:where([class~="not-prose"] *)) {
-    border: 1px solid rgba(255,255,255,0.10);
+  .acm-prose :where(table):not(:where([class~='not-prose'] *)) {
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 1rem;
     overflow: hidden;
   }
-  .acm-prose :where(thead):not(:where([class~="not-prose"] *)) {
-    background: rgba(255,255,255,0.04);
+  .acm-prose :where(thead):not(:where([class~='not-prose'] *)) {
+    background: rgba(255, 255, 255, 0.04);
   }
-  .acm-prose :where(th,td):not(:where([class~="not-prose"] *)) {
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+  .acm-prose :where(th, td):not(:where([class~='not-prose'] *)) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  .acm-prose :where(hr):not(:where([class~="not-prose"] *)) {
-    border-color: rgba(255,255,255,0.10);
+  .acm-prose :where(hr):not(:where([class~='not-prose'] *)) {
+    border-color: rgba(255, 255, 255, 0.1);
   }
 }
 

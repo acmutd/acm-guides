@@ -1,41 +1,46 @@
 export const meta = {
-  title: "Postman & API Basics",
+  title: 'Postman & API Basics',
   description: "Dev's guide to using Postman & understanding API requests",
-  updated: "2026-02-09",
+  updated: '2026-02-09',
 };
 
-***
+---
 
 Welcome! In this guide, we will set up **Postman**, the industry-standard tool for testing, documenting, and building APIs.
 
 **What you’ll learn:**
-*   **The Concept:** Understanding APIs using the "Restaurant" metaphor.
-*   **The Setup:** How to install and configure Postman on Windows and macOS.
-*   **The Commands:** The essential cheat sheet for making requests.
 
-***
+- **The Concept:** Understanding APIs using the "Restaurant" metaphor.
+- **The Setup:** How to install and configure Postman on Windows and macOS.
+- **The Commands:** The essential cheat sheet for making requests.
+
+---
 
 ## 🧠 1. What is an API?
+
 Think of an **API** (Application Programming Interface) as a **waiter in a restaurant**.
+
 1.  **You (The Client):** You look at the menu (documentation) and give an order (request) to the waiter.
 2.  **The Waiter (The API):** Takes your order to the kitchen and ensures it's formatted correctly.
 3.  **The Kitchen (The Server):** Prepares your food (data).
 4.  **The Waiter:** Brings the food back to you (response).
 
 ### The Anatomy of a Request
+
 Just like a sentence needs a verb and a noun, an API request needs specific parts to work.
 
 | Part              | Description                                                   |
-|:------------------|:--------------------------------------------------------------|
+| :---------------- | :------------------------------------------------------------ |
 | **Method (Verb)** | What you want to do (e.g., `GET` implies retrieving data).    |
 | **URL (Address)** | Where the kitchen lives (e.g., `api.github.com/users`).       |
 | **Headers**       | Meta-information, like authentication tokens or content type. |
-| **Body**          | The data you are sending *to* the server (used in POST/PUT).  |
+| **Body**          | The data you are sending _to_ the server (used in POST/PUT).  |
 | **Status Code**   | The result. `200` is OK, `404` is Missing, `500` is Broken.   |
 
-***
+---
 
 ## 💿 2. Installation
+
 Before we start, let's get the tool on your machine. While Postman has a web version, we recommend the Desktop App for local development.
 
 **Verification:**
@@ -46,15 +51,16 @@ After installing, simply open the app. If you see a "Workspaces" dashboard, you 
 1.  **Download:** Go to [postman.com/downloads](https://www.postman.com/downloads/).
 2.  **Run Installer:** Download the Windows 64-bit installer.
 3.  **The Setup:**
-    *   Run the `.exe` file.
-    *   Postman installs silently and will open automatically when finished.
-    *   *Note:* You may be asked to sign in. You can "Skip" to the app, but creating a free account is recommended to save your work to the cloud.
+    - Run the `.exe` file.
+    - Postman installs silently and will open automatically when finished.
+    - _Note:_ You may be asked to sign in. You can "Skip" to the app, but creating a free account is recommended to save your work to the cloud.
 
 ### 🍎 macOS
 
 You have two easy options.
 
 **Option A: Manual Download (Standard)**
+
 1.  Go to [postman.com/downloads](https://www.postman.com/downloads/).
 2.  Click "Download" (Select "Apple Chip" if you have M1/M2/M3, or "Intel" for older Macs).
 3.  Unzip the file and drag the **Postman** app into your `Applications` folder.
@@ -66,26 +72,29 @@ If you have [Homebrew](https://brew.sh/) installed:
 brew install --cask postman
 ```
 
-***
+---
 
 ## ⚙️ 3. First-Time Configuration
 
 Once installed, organizing your work is key. Postman uses **Collections** to group related requests (like folders).
 
 **1. Create a Workspace:**
-*   Click **Workspaces** in the top-left → **Create Workspace**.
-*   Name it "ACM Workshop" and select "Personal".
+
+- Click **Workspaces** in the top-left → **Create Workspace**.
+- Name it "ACM Workshop" and select "Personal".
 
 **2. Create a Collection:**
-*   In the left sidebar, click the **+** button next to **Collections**.
-*   Name it "My First API".
+
+- In the left sidebar, click the **+** button next to **Collections**.
+- Name it "My First API".
 
 **3. Set an Environment (Optional but Pro):**
-*   Click **Environments** in the sidebar.
-*   Add a variable named `baseURL` with a value of `https://jsonplaceholder.typicode.com`.
-*   *Why?* Now you can use `{{baseURL}}/users` instead of typing the full URL every time.
 
-***
+- Click **Environments** in the sidebar.
+- Add a variable named `baseURL` with a value of `https://jsonplaceholder.typicode.com`.
+- _Why?_ Now you can use `{{baseURL}}/users` instead of typing the full URL every time.
+
+---
 
 ## ⚡ 4. Essential Commands
 
@@ -94,7 +103,7 @@ These are the HTTP methods you will use 99% of the time.
 ### The "CRUD" Actions
 
 | Action     | Method      | Description                                           |
-|:-----------|:------------|:------------------------------------------------------|
+| :--------- | :---------- | :---------------------------------------------------- |
 | **Create** | `POST`      | Send new data to the server (e.g., Sign up a user).   |
 | **Read**   | `GET`       | Retrieve data from the server (e.g., Load a profile). |
 | **Update** | `PUT/PATCH` | Edit existing data (e.g., Change a password).         |
@@ -113,30 +122,40 @@ Select your method and paste the URL.
 
 **2. Send**
 Hit the big blue **Send** button.
-*   *Watch the bottom pane:* This is where the JSON response appears.
-*   *Check the status:* Look for **200 OK** in green.
+
+- _Watch the bottom pane:_ This is where the JSON response appears.
+- _Check the status:_ Look for **200 OK** in green.
 
 **3. Save**
 Don't lose your work!
-*   Click **Save** (Cmd/Ctrl + S).
-*   Give it a name (e.g., "Get Todo Item") and save it to your "My First API" collection.
 
-***
+- Click **Save** (Cmd/Ctrl + S).
+- Give it a name (e.g., "Get Todo Item") and save it to your "My First API" collection.
+
+---
 
 ## 🐛 Troubleshooting
 
 ### "404 Not Found"
+
 The waiter couldn't find what you asked for.
-*   **Fix:** Check your URL for typos. Did you mean `/users` instead of `/user`?
+
+- **Fix:** Check your URL for typos. Did you mean `/users` instead of `/user`?
 
 ### "401 Unauthorized" or "403 Forbidden"
+
 The bouncer stopped you at the door.
-*   **Fix:** You need an API Key or Token. Go to the **Auth** tab in your request, select "Bearer Token" (or "API Key"), and paste your credential.
+
+- **Fix:** You need an API Key or Token. Go to the **Auth** tab in your request, select "Bearer Token" (or "API Key"), and paste your credential.
 
 ### "Could not get any response"
+
 Postman can't reach the server at all.
-*   **Fix:** If you are testing a local server (e.g., `localhost:3000`), ensure your server is actually running in your terminal. If using the *Web Version* of Postman, you might need to install the **Postman Desktop Agent**.
+
+- **Fix:** If you are testing a local server (e.g., `localhost:3000`), ensure your server is actually running in your terminal. If using the _Web Version_ of Postman, you might need to install the **Postman Desktop Agent**.
 
 ### "400 Bad Request"
+
 The kitchen didn't understand your order.
-*   **Fix:** You likely sent bad data. Check your **Body** tab. Ensure you selected **raw** -> **JSON** and that your JSON syntax is perfect (all keys must be in "double quotes").
+
+- **Fix:** You likely sent bad data. Check your **Body** tab. Ensure you selected **raw** -> **JSON** and that your JSON syntax is perfect (all keys must be in "double quotes").

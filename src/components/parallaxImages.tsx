@@ -43,31 +43,33 @@ const ParallaxImages: React.FC = () => {
         const multiplier = multipliers[imgClass] || 0.02;
         const x = offX * -multiplier;
         const y = offY * -multiplier;
-        
-        (layer as HTMLElement).style.transform = `translate3d(${x}px, ${y}px, 0)`;
+
+        (layer as HTMLElement).style.transform =
+          `translate3d(${x}px, ${y}px, 0)`;
       });
     };
 
     const handleMouseMove = (e: MouseEvent) => {
       mousePos.current = { x: e.clientX, y: e.clientY };
-      
+
       if (!isHovering.current) return;
 
       // Cancel previous frame and request new one (safari throttling workaround me thinks)
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current);
       }
-      
+
       rafRef.current = requestAnimationFrame(updateParallax);
     };
 
     const handleMouseLeave = () => {
       isHovering.current = false;
-      
+
       document.querySelectorAll('.parallax-layer').forEach((layer) => {
         const img = layer.querySelector('img');
         if (img) img.style.animation = 'none';
-        (layer as HTMLElement).style.transition = 'transform 6s cubic-bezier(0.05, 0.7, 0.3, 1)';
+        (layer as HTMLElement).style.transition =
+          'transform 6s cubic-bezier(0.05, 0.7, 0.3, 1)';
         (layer as HTMLElement).style.transform = 'translate3d(0, 0, 0)';
       });
 
@@ -92,8 +94,10 @@ const ParallaxImages: React.FC = () => {
         });
         const multiplier = multipliers[imgClass] || 0.02;
 
-        (layer as HTMLElement).style.transition = 'transform 6s cubic-bezier(0.05, 0.7, 0.3, 1)';
-        (layer as HTMLElement).style.transform = `translate3d(${offX * -multiplier}px, ${offY * -multiplier}px, 0)`;
+        (layer as HTMLElement).style.transition =
+          'transform 6s cubic-bezier(0.05, 0.7, 0.3, 1)';
+        (layer as HTMLElement).style.transform =
+          `translate3d(${offX * -multiplier}px, ${offY * -multiplier}px, 0)`;
 
         const img = layer.querySelector('img');
         if (img) (img as HTMLElement).style.animation = '';
@@ -107,7 +111,9 @@ const ParallaxImages: React.FC = () => {
     };
 
     window.addEventListener('resize', handleResize);
-    document.body.addEventListener('mousemove', handleMouseMove, { passive: true });
+    document.body.addEventListener('mousemove', handleMouseMove, {
+      passive: true,
+    });
     document.body.addEventListener('mouseleave', handleMouseLeave);
     document.body.addEventListener('mouseenter', handleMouseEnter);
 
@@ -146,15 +152,17 @@ const ParallaxImages: React.FC = () => {
     const duration = 10 + Math.random() * 10 + 's';
     const delay = '-' + Math.random() * 10 + 's';
 
-    const blurClass = blur === '4px' ? 'blur-sm' :
-      blur === '2px' ? 'blur-[2px]' :
-      blur === '1px' ? 'blur-[1px]' :
-      '';
+    const blurClass =
+      blur === '4px'
+        ? 'blur-sm'
+        : blur === '2px'
+          ? 'blur-[2px]'
+          : blur === '1px'
+            ? 'blur-[1px]'
+            : '';
 
     return (
-      <div
-        className={`parallax-layer absolute ${name} ${className} z-0`}
-      >
+      <div className={`parallax-layer absolute ${name} ${className} z-0`}>
         <img
           src={src}
           alt=""
