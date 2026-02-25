@@ -1,0 +1,170 @@
+export const meta = {
+  title: 'Git in a Team',
+  description: "Dev's guide to using Git in a team setting",
+  updated: '2026-02-24',
+  order: 2,
+};
+
+---
+
+Welcome! In this guide, we will cover the practical workflow for using Git collaboratively: branch naming, creating clean <Tooltip tip="A request to merge your branch into another branch, typically reviewed by teammates before approval">Pull Requests (PRs)</Tooltip>, code review etiquette, and what to do when Git inevitably yells at you.
+
+**What you'll learn:**
+
+- **The Proper Route:** How to create branches with the right prefixes.
+- **The PR Flow:** How to open, review, and merge Pull Requests.
+- **The Fix:** How to handle merge conflicts without panicking.
+
+---
+
+## 🔀 1. Branches: The Proper Route
+
+Before you start coding, you need an isolated place to work so you don't break the main project.
+
+### Step 1: Start from `main`
+
+Always make sure your local `main` branch is up to date before branching off.
+
+```bash
+git checkout main
+git pull
+```
+
+_(If your team uses `develop` instead of `main`, just swap the names!)_
+
+### Step 2: Branch Naming
+
+Use one of these prefixes followed by a short, <Tooltip tip="A naming style where words are separated by hyphens, i.e. `my-branch-name`">kebab-case</Tooltip> description of your work:
+
+- `feat/` - New user-facing functionality or a meaningful addition.
+- `fix/` - A bug fix or patching a <Tooltip tip="A bug that was accidentally introduced by a recent change that previously worked fine">regression</Tooltip>.
+- `task/` - Chores, <Tooltip tip="Restructuring existing code to improve readability or structure without changing its behavior">refactors</Tooltip>, docs, or <Tooltip tip="Automated pipelines that run tests and checks whenever code is pushed">CI</Tooltip> tweaks that aren't user-facing.
+
+**Examples:**
+- `feat/auth-password-reset`
+- `fix/navbar-overflow-mobile`
+- `task/update-readme`
+
+Create and switch to your new branch:
+
+```bash
+git checkout -b feat/auth-password-reset
+```
+
+---
+
+## 💾 2. Commit Hygiene
+
+Make it easy for your team to understand your changes.
+
+- **Keep commits small:** Aim for "one idea per commit."
+- **Avoid "WIP" commits:** Unless you plan to <Tooltip tip="Squashing combines multiple commits into a single, cleaner commit before merging">squash</Tooltip> them later.
+- **Write clear messages:**
+  - `feat: add workshop card grid`
+  - `fix: handle null updated date`
+  - `task: format with prettier`
+
+```bash
+git add -A
+git commit -m "feat: add branch naming docs"
+```
+
+---
+
+## 🚀 3. Pull Requests (PRs)
+
+Once you have commits, push them to GitHub and open a Pull Request.
+
+```bash
+git push -u origin feat/auth-password-reset
+```
+
+### Push early, push often
+Open a PR as soon as it's runnable, even if it's not perfect. A **Draft PR** is a great way to get early feedback and unblock others who might depend on your work.
+
+### What makes a "Good PR"?
+- **What changed:** 1–3 sentences explaining the addition.
+- **Why it changed:** Context for the reviewer.
+- **How to test it:** Steps or a short checklist.
+- **Visuals:** Screenshots or GIFs for UI changes.
+
+---
+
+## 👀 4. Code Reviews
+
+Code reviews are about collaboration, not criticism.
+
+### How to respond like a pro
+- **If you agree:** Implement the change and reply "Done."
+- **If you disagree:** Explain your reasoning respectfully and offer an alternative.
+- **If you don't understand:** Ask a direct question (e.g., "Could you clarify what you mean by X?").
+
+### Keep the thread clean
+When you push a fix based on feedback, reply to the specific comment or mark it as resolved so the reviewer knows to check it again.
+
+---
+
+## ⚡ 5. Staying Up-to-Date
+
+If your PR is open for a while, your branch will drift from `main` as other people merge their code.
+
+### Option A: Merge (Simpler, noisier history)
+Pull the latest `main` code directly into your feature branch.
+
+```bash
+git fetch origin
+git merge origin/main
+git push
+```
+
+### Option B: Rebase (Clean, linear history)
+<Tooltip tip="Rebase moves your commits to start from the tip of another branch, as if you'd branched off it just now, giving you a cleaner history">Replay your changes on top of the latest `main`.</Tooltip>
+
+```bash
+git fetch origin
+git rebase origin/main
+```
+(Note: If you already pushed your branch, rebasing requires a <Tooltip tip="A force push overwrites the remote branch with your local version.">force push</Tooltip>: `git push --force-with-lease`)
+
+Ask your team lead which approach the project prefers!
+
+---
+
+## 💥 6. Merge Conflicts
+
+Conflicts happen when Git can't automatically combine your changes with someone else's. The goal is to make the final code correct, not just to "make Git happy."
+
+### How to resolve them:
+1. Open the conflicted file(s) in VS Code.
+2. Look for the conflict markers:
+
+```text
+<<<<<<< HEAD
+your changes
+=======
+their changes
+>>>>>>> origin/main
+```
+
+3. Decide what the final code should be (VS Code usually provides "Accept Current", "Accept Incoming", or "Accept Both" buttons).
+4. Save the file.
+5. Mark it as resolved and continue:
+
+```bash
+git add path/to/file
+git commit
+```
+
+**Abort if needed:** If you get overwhelmed and want to bail out, you can always run `git merge --abort` or `git rebase --abort`.
+
+---
+
+## ✅ Quick Checklist
+
+Before you hit that big green Merge button:
+
+- [ ] Branch name starts with `feat/`, `fix/`, or `task/`.
+- [ ] PR explains what/why/how-to-test.
+- [ ] Review feedback handled respectfully.
+- [ ] Branch is up-to-date with `main` and conflicts are resolved.
+- [ ] Your code actually runs locally!

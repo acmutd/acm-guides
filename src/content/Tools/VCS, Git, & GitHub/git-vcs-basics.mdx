@@ -2,15 +2,16 @@ export const meta = {
   title: 'Git & Version Control Basics',
   description: "Dev's guide to using & understanding Git & VCS",
   updated: '2026-02-09',
+  order: 1,
 };
 
 ---
 
 Welcome! In this guide, we will set up **Git**, the industry-standard tool for tracking code changes and collaborating with other developers.
 
-**What you’ll learn:**
+**What you'll learn:**
 
-- **The Concept:** Understanding Version Control Systems (VCS) as "save points."
+- **The Concept:** Understanding <Tooltip tip="Software that tracks changes to files over time, letting you revert, compare, and collaborate">**VCS**</Tooltip> as "save points."
 - **The Setup:** How to install and configure Git on Windows and macOS.
 - **The Commands:** The essential cheat sheet for your daily workflow.
 
@@ -22,7 +23,7 @@ Think of **Git** as a time machine for your code. It allows you to:
 
 1.  **Track History:** See exactly who changed what line of code and when.
 2.  **Collaborate:** Merge work from multiple people into one project without overwriting files.
-3.  **Revert:** Broke the app? Jump back to a previous "save point" (commit) instantly.
+3.  **Revert:** Broke the app? Jump back to a previous "save point" (<Tooltip tip="A snapshot of your project at a specific point in time, saved with a message describing the change">**commit**</Tooltip>) instantly.
 
 ### The Workflow
 
@@ -72,7 +73,7 @@ git --version
 
 If not installed, macOS will prompt you to install the Xcode Command Line Tools. Click "Install."
 
-**Option B: Homebrew (Preferred)**
+**Option B: <Tooltip tip="A package manager for macOS that lets you install developer tools from the command line">Homebrew</Tooltip> (Preferred)**
 If you have [Homebrew](https://brew.sh/) installed:
 
 ```bash
@@ -119,7 +120,7 @@ These are the commands you will use 99% of the time.
 Every time you finish a task, follow this 3-step rhythm:
 
 **1. Add (Stage)**
-Move changes to the staging area.
+Move changes to the <Tooltip tip="A preparation area where you collect file changes before saving them as a commit">staging area</Tooltip>.
 
 ```bash
 git add .
@@ -146,7 +147,7 @@ git push
 ### Checking In
 
 **Status (The MVP)**
-Run this constantly. It tells you what files are changed, staged, or untracked.
+Run this constantly. It tells you what files are changed, staged, or <Tooltip tip="A file Git can see but isn't tracking yet and won't be included in commits until you `git add` it">untracked</Tooltip>.
 
 ```bash
 git status
@@ -173,7 +174,7 @@ You are trying to run a git command inside a folder that isn't tracked.
 
 GitHub doesn't recognize your computer.
 
-- **Fix:** You likely need to set up an SSH key or use a Personal Access Token. For beginners, try cloning using the **HTTPS** URL instead of the **SSH** URL.
+- **Fix:** You likely need to set up an <Tooltip tip="A pair of cryptographic keys used to securely authenticate with GitHub without a password">SSH key</Tooltip> or use a <Tooltip tip="A token you generate in GitHub settings to use as a password when authenticating over HTTPS">Personal Access Token</Tooltip>. For beginners, try cloning using the **HTTPS** URL instead of the **SSH** URL.
 
 ### "Merge conflict"
 

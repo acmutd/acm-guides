@@ -170,6 +170,7 @@ function MobileTOCDrawer({
 }: {
   open: boolean;
   onClose: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   headings: any[];
   activeId: string;
   setActiveId: (id: string) => void;
@@ -249,6 +250,7 @@ function MobileDocHeader({
   onTocOpen,
   onGuidesOpen,
 }: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   entry: any;
   onTocOpen: () => void;
   onGuidesOpen: () => void;
@@ -341,13 +343,14 @@ function SidebarItem({
   const basePadding = 16;
 
   if (node.type === 'doc') {
+    visitedPages.has(node.slug);
     return (
       <NavLink
         to={`/docs/${node.slug}`}
         onClick={onClose}
         className={({ isActive }) =>
           classNames(
-            'group flex w-full min-w-0 items-center rounded-r-lg border-l-2 py-2 pr-2 text-sm font-medium transition-all duration-200 hover:text-zinc-900 dark:hover:text-white',
+            'group flex w-full min-w-0 items-center gap-2 rounded-r-lg border-l-2 py-2 pr-2 text-sm font-medium transition-all duration-200 hover:text-zinc-900 dark:hover:text-white',
             isActive
               ? 'border-zinc-900 bg-zinc-100 text-zinc-900 dark:border-white dark:bg-white/10 dark:text-white'
               : 'border-transparent text-zinc-500 hover:border-zinc-300 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:bg-white/5'
@@ -355,7 +358,31 @@ function SidebarItem({
         }
         style={{ paddingLeft: depth * indentSize + basePadding }}
       >
-        <span className="truncate">{stripEmojis(node.title)}</span>
+        {({ isActive }) => (
+          <>
+            <svg
+              className={classNames(
+                'shrink-0 w-3.5 h-3.5 transition-colors',
+                isActive
+                  ? 'text-zinc-700 dark:text-zinc-300'
+                  : 'text-zinc-300 dark:text-zinc-600 group-hover:text-zinc-400 dark:group-hover:text-zinc-500'
+              )}
+              viewBox="0 0 14 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="2" y="1" width="10" height="14" rx="1.5" />
+              <line x1="4.5" y1="5" x2="9.5" y2="5" />
+              <line x1="4.5" y1="8" x2="9.5" y2="8" />
+              <line x1="4.5" y1="11" x2="7.5" y2="11" />
+            </svg>
+
+            <span className="truncate flex-1">{stripEmojis(node.title)}</span>
+          </>
+        )}
       </NavLink>
     );
   }
@@ -363,7 +390,6 @@ function SidebarItem({
   const isActive = isNodeActive(node, location.pathname);
   const hasVisited = hasVisitedChild(node, visitedPages);
 
-  // Priority ordering: manually opened/closed state > active state > visited state > depth 0
   const isManuallySet = openCategories?.has(node.name);
   const shouldBeOpen =
     isActive || (!isManuallySet && (hasVisited || depth === 0));
@@ -379,28 +405,62 @@ function SidebarItem({
         <>
           <Disclosure.Button
             className={classNames(
-              'flex w-full min-w-0 items-center justify-between py-2 pr-2 text-left text-xs font-bold uppercase tracking-wider text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200',
-              open ? 'text-zinc-900 dark:text-zinc-200' : ''
+              'flex w-full min-w-0 items-center justify-between gap-1.5 py-2 pr-2 text-left text-xs font-bold uppercase tracking-wider transition-colors',
+              'rounded-r-md',
+              open
+                ? 'text-zinc-900 dark:text-zinc-100 bg-zinc-100/70 dark:bg-white/5'
+                : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-white/[0.03]'
             )}
             style={{ paddingLeft: depth * indentSize + basePadding }}
             onClick={() => {
-              if (setOpenCategories && !isActive) {
+              if (setOpenCategories) {
                 setOpenCategories((prev) => {
                   const updated = new Set(prev);
-                  updated.add(node.name);
+                  if (updated.has(node.name)) {
+                    updated.delete(node.name);
+                  } else {
+                    updated.add(node.name);
+                  }
                   return updated;
                 });
               }
             }}
           >
-            <span className="truncate mr-2">{stripEmojis(node.name)}</span>
+            <svg
+              className={classNames(
+                'shrink-0 w-3.5 h-3.5 transition-colors',
+                open
+                  ? 'text-orange-500 dark:text-orange-400'
+                  : 'text-zinc-400 dark:text-zinc-500'
+              )}
+              viewBox="0 0 16 14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              {open ? (
+                <>
+                  <path d="M1 4.5C1 3.67 1.67 3 2.5 3H6l1.5 2H13.5C14.33 5 15 5.67 15 6.5v5c0 .83-.67 1.5-1.5 1.5h-11C1.67 13 1 12.33 1 11.5v-7z" />
+                </>
+              ) : (
+                <>
+                  <path d="M1 3.5C1 2.67 1.67 2 2.5 2H6l1.5 2H13.5C14.33 4 15 4.67 15 5.5v6c0 .83-.67 1.5-1.5 1.5h-11C1.67 13 1 12.33 1 11.5v-8z" />
+                </>
+              )}
+            </svg>
+
+            <span className="truncate mr-auto">{stripEmojis(node.name)}</span>
+
             <ChevronRightIcon
               className={classNames(
-                'h-4 w-4 shrink-0 text-zinc-400 transition-transform duration-200',
+                'h-3.5 w-3.5 shrink-0 text-zinc-400 transition-transform duration-200',
                 open ? 'rotate-90' : ''
               )}
             />
           </Disclosure.Button>
+
           <Transition
             enter="transition duration-100 ease-out"
             enterFrom="transform scale-95 opacity-0"
@@ -519,6 +579,7 @@ function DocsContent() {
   // current page marked as visited
   useEffect(() => {
     if (!isIndex && slug) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setVisitedPages((prev) => {
         const updated = new Set(prev);
         updated.add(slug);
@@ -527,7 +588,7 @@ function DocsContent() {
             'docs-visited-pages',
             JSON.stringify([...updated])
           );
-        } catch {}
+        } catch { /* empty */ }
         return updated;
       });
     }

@@ -3,6 +3,7 @@ export type DocNode = {
   title: string;
   slug: string;
   description?: string;
+  order?: number;
 };
 
 export type CategoryNode = {
@@ -13,13 +14,29 @@ export type CategoryNode = {
 
 export type DocEntry = {
   slug: string;
-  meta: { title: string; description?: string; updated?: string };
+  meta: {
+    title: string;
+    description?: string;
+    updated?: string;
+    order?: number;
+  };
   load: () => Promise<never>;
 };
 
+const CATEGORY_ORDER = [
+  'ACM Development',
+  'Workshops',
+  'Tools',
+];
+
 const modules = import.meta.glob('../content/**/*.mdx');
 
-type MdxMeta = { title?: string; description?: string; updated?: string };
+type MdxMeta = {
+  title?: string;
+  description?: string;
+  updated?: string;
+  order?: number;
+};
 const metas = import.meta.glob('../content/**/*.mdx', {
   eager: true,
   import: 'meta',
@@ -35,6 +52,32 @@ function formatTitle(raw: string) {
     .split('-')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
+}
+
+function getWeight(node: DocNode | CategoryNode) {
+  if (node.type === 'category') {
+    const idx = CATEGORY_ORDER.indexOf(node.name);
+    return idx !== -1 ? idx : 999;
+  }
+  return node.order ?? 999;
+}
+
+function sortTree(nodes: (DocNode | CategoryNode)[]) {
+  nodes.sort((a, b) => {
+    const weightA = getWeight(a);
+    const weightB = getWeight(b);
+    if (weightA !== weightB) return weightA - weightB;
+
+    const nameA = a.type === 'doc' ? a.title : a.name;
+    const nameB = b.type === 'doc' ? b.title : b.name;
+    return nameA.localeCompare(nameB);
+  });
+
+  nodes.forEach((node) => {
+    if (node.type === 'category') {
+      sortTree(node.items);
+    }
+  });
 }
 
 export const ALL_DOCS: DocEntry[] = [];
@@ -53,6 +96,7 @@ for (const path in modules) {
       title: fm?.title ?? formatTitle(filename),
       description: fm?.description,
       updated: fm?.updated,
+      order: fm?.order,
     },
     load: modules[path] as never,
   };
@@ -81,9 +125,11 @@ for (const path in modules) {
     title: entry.meta.title,
     slug,
     description: entry.meta.description,
+    order: entry.meta.order,
   });
 }
 
+sortTree(SIDEBAR_TREE);
 ALL_DOCS.sort((a, b) => a.slug.localeCompare(b.slug));
 
 export function getDoc(slug: string) {
