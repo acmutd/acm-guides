@@ -1,0 +1,234 @@
+export const meta = {
+  title: 'Terminal Basics',
+  description: "Dev's guide to using the terminal",
+  updated: '2026-02-24',
+  order: 1,
+};
+
+---
+
+Welcome! In this guide, we will get comfortable with the **terminal** - the text-based interface that lets you control your computer like a developer. Most guides on this site assume you can use it, so let's make sure you can.
+
+**What you'll learn:**
+
+- **The Concept:** What the terminal actually is and why we use it.
+- **The Setup:** How to open a good terminal on Windows and macOS.
+- **The Commands:** The essential cheat sheet for navigating and managing files.
+
+---
+
+## 🧠 1. What is the Terminal?
+
+Your computer has two interfaces: the one with windows and icons you click, and the terminal - a text box where you type commands directly. Developers use it because it's faster, more powerful, and because most dev tools (like Git and Node) are designed for it first.
+
+The terms **terminal**, **shell**, and **command line** are often used interchangeably. Technically they're different things, but for our purposes they all mean the same thing: the place where you type commands.
+
+---
+
+## 💿 2. Opening a Terminal
+
+### 🍎 macOS / 🐧 Linux
+
+Your machine comes with a perfectly good terminal out of the box.
+
+**Built-in (works great):**
+Open **Spotlight** (`Cmd + Space`), type "Terminal", and hit Enter.
+
+**Recommended upgrade:**
+[iTerm2](https://iterm2.com/) is a free replacement with better tab support, split panes, and search. Install it via Homebrew:
+```bash
+brew install --cask iterm2
+```
+
+Either way, the commands are identical. It's just a window preference.
+
+### 🪟 Windows
+
+Windows has two older terminals (`cmd.exe` and PowerShell) but neither uses the same commands as macOS/Linux. The fix is **Windows Subsystem for Linux (WSL)**, which gives you a real Linux terminal on Windows. This is what the rest of this guide assumes.
+
+**Install WSL:**
+Open PowerShell as Administrator and run:
+```powershell
+wsl --install
+```
+
+Restart your machine when prompted. After rebooting, search for **Ubuntu** in the Start Menu. That's your new terminal.
+
+> **Why WSL?** Every dev tool, tutorial, and guide (including ours) is written with Mac/Linux commands in mind. WSL means you can follow along without translating every command.
+
+---
+
+## ⚙️ 3. First-Time Setup
+
+Before diving in, it's worth making sure your terminal is integrated with VS Code so you can open it right inside your editor without switching windows.
+
+**In VS Code**, open the integrated terminal with:
+
+| macOS / Linux  | Windows (WSL)  |
+|:---------------|:---------------|
+| `` Ctrl + ` `` | `` Ctrl + ` `` |
+
+On Windows, VS Code should automatically detect WSL. If it doesn't, open the Command Palette (`Ctrl + Shift + P`) and search for **"Select Default Profile"** → pick **WSL Bash**.
+
+---
+
+## ⚡ 4. Essential Commands
+
+These are the commands you will use constantly. The syntax is the same on macOS, Linux, and WSL.
+
+### Navigating Around
+
+Think of the terminal as a file explorer where you type instead of click. At any moment, you are "inside" a folder. This is called your <Tooltip tip="The folder you are currently inside in the terminal. Commands run relative to this location.">working directory</Tooltip>.
+
+**Where am I?**
+```bash
+pwd
+```
+_Prints the full path of your current folder, e.g. `/Users/yourname/projects`._
+
+**What's in here?**
+```bash
+ls
+```
+_Lists all files and folders in the current directory._
+```bash
+ls -la
+```
+_Same, but also shows hidden files (ones starting with `.`) and file permissions._
+
+**Move into a folder:**
+```bash
+cd projects
+```
+
+**Move up one level:**
+```bash
+cd ..
+```
+
+**Go straight home:**
+```bash
+cd ~
+```
+_`~` is a shortcut for your home directory (`/Users/yourname` on Mac, `/home/yourname` on Linux/WSL)._
+
+**Jump anywhere with a full path:**
+```bash
+cd ~/projects/my-app
+```
+
+---
+
+### Managing Files & Folders
+
+**Create a new folder:**
+```bash
+mkdir my-project
+```
+
+**Create a new file:**
+```bash
+touch index.html
+```
+
+**Copy a file:**
+```bash
+cp index.html index-backup.html
+```
+
+**Move or rename a file:**
+```bash
+mv index.html src/index.html   # move
+mv old-name.html new-name.html # rename
+```
+
+**Delete a file:**
+```bash
+rm index.html
+```
+
+**Delete a folder and everything inside it:**
+```bash
+rm -rf my-project
+```
+
+> ⚠️ `rm -rf` is permanent. There's no Recycle Bin. Double-check your path before running it.
+
+---
+
+### Reading Files
+
+**Print a file's contents:**
+```bash
+cat package.json
+```
+
+**Open a file in VS Code from the terminal:**
+```bash
+code index.html
+```
+
+**Open your entire current folder in VS Code:**
+```bash
+code .
+```
+
+---
+
+### Handy Shortcuts
+
+These work everywhere and will save you a lot of time:
+
+| Shortcut   | What it does                                                                                                                          |
+|:-----------|:--------------------------------------------------------------------------------------------------------------------------------------|
+| `Tab`      | <Tooltip tip="Completes a filename or command so you don't have to type the whole thing">Autocomplete</Tooltip> a file or folder name |
+| `↑ / ↓`    | Scroll through your previous commands                                                                                                 |
+| `Ctrl + C` | Cancel a running command                                                                                                              |
+| `Ctrl + L` | Clear the screen                                                                                                                      |
+| `Ctrl + A` | Jump to the start of the line                                                                                                         |
+| `Ctrl + E` | Jump to the end of the line                                                                                                           |
+
+---
+
+## 🪟 Windows-Specific Notes
+
+If you're ever stuck in plain PowerShell or `cmd.exe` instead of WSL, here's the translation for the most common commands:
+
+| What you want | macOS / Linux / WSL | PowerShell         |
+|:--------------|:--------------------|:-------------------|
+| Where am I?   | `pwd`               | `pwd`              |
+| List files    | `ls`                | `dir`              |
+| Change folder | `cd projects`       | `cd projects`      |
+| Create folder | `mkdir my-project`  | `mkdir my-project` |
+| Create file   | `touch index.html`  | `ni index.html`    |
+| Delete file   | `rm file.html`      | `rm file.html`     |
+| Delete folder | `rm -rf folder`     | `rm -r folder`     |
+
+That being said... just use WSL. Despite the similarities in some commands above, UNIX is superior in almost every way.
+
+---
+
+## 🐛 Troubleshooting
+
+### "command not found"
+
+The terminal doesn't recognize what you typed.
+
+- **Fix:** Check for typos. If the command is something you just installed (like `git` or `node`), try closing and reopening your terminal, as it needs to reload to pick up new programs.
+
+### "permission denied"
+
+You don't have the rights to run that command or access that file.
+
+- **Fix:** On macOS/Linux, prefix the command with `sudo` to run it as an administrator: `sudo rm locked-file.txt`. It will ask for your password.
+
+### My terminal opened in the wrong folder
+
+- **Fix:** Use `cd` to navigate where you need to go, or open VS Code in the right folder first and use the integrated terminal. It will open directly in your project root.
+
+### WSL can't find my Windows files
+
+Your Windows files live at `/mnt/c/` in WSL. So `C:\Users\yourname\projects` becomes:
+```bash
+cd /mnt/c/Users/yourname/projects
+```

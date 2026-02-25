@@ -1,0 +1,179 @@
+export const meta = {
+  title: 'Vim & Nano',
+  description: "Dev's guide to editing files in the terminal",
+  updated: '2026-02-24',
+  order: 2,
+};
+
+---
+
+Welcome! In this guide, we will cover the two most common <Tooltip tip="A text editor that runs inside the terminal, rather than as a separate window like VS Code">terminal text editors</Tooltip>: **Nano** and **Vim**. You'll encounter both whether you want to or not, so knowing them will save you from being stuck in a terminal with no way out.
+
+**What you'll learn:**
+
+- **The Concept:** Why terminal editors exist and when you'd use them.
+- **Nano:** The beginner-friendly editor for quick edits.
+- **Vim:** The powerful (and infamous) editor you'll need to at least survive.
+
+If you're a CS major at UT Dallas, you'll need to know the basics of Vim for CS 3377, so this may help you academically too!
+
+---
+
+## 🧠 1. Why Terminal Editors?
+
+VS Code is great, but there are situations where you only have a terminal, such editing a config file on a remote server, making a quick fix mid-<Tooltip tip="A script that runs automatically as part of your Git or deployment workflow">pipeline</Tooltip>, or when Git drops you into an editor to write a commit message. In those moments, knowing Nano or Vim is the difference between getting the job done and being completely stuck.
+
+> If you've ever run `git commit` without the `-m` flag and ended up in a cryptic fullscreen editor with no idea how to escape - that was Vim. This guide will make sure that never happens again.
+
+---
+
+## 🌿 2. Nano
+
+Nano is the approachable one. Its controls are shown at the bottom of the screen at all times, so you're never guessing.
+
+### Opening a file
+```bash
+nano index.html
+```
+
+If the file doesn't exist, Nano will create it when you save.
+
+### The interface
+
+When Nano opens, you're immediately in editing mode and can just start typing. At the bottom you'll see a bar that looks like this:
+```text
+^G Help    ^O Write Out    ^X Exit    ^R Read File    ^W Where Is
+```
+
+The `^` symbol means `Ctrl`. So `^X` means `Ctrl + X`.
+
+### Essential controls
+
+| Action       | Shortcut                            |
+|:-------------|:------------------------------------|
+| Save         | `Ctrl + O`, then `Enter` to confirm |
+| Exit         | `Ctrl + X`                          |
+| Save & exit  | `Ctrl + O` → `Enter` → `Ctrl + X`   |
+| Search       | `Ctrl + W`, type your term, `Enter` |
+| Cut a line   | `Ctrl + K`                          |
+| Paste a line | `Ctrl + U`                          |
+| Jump to line | `Ctrl + _`, type line number        |
+
+### When to use Nano
+
+Nano is perfect for quick edits like tweaking a config file, writing a short script, or making a one-line fix. If you're doing anything more involved, use VS Code or another text editor.
+
+---
+
+## ⚡ 3. Vim
+
+Vim is the one with the reputation. It's steep to learn but extraordinarily fast once it clicks, and many developers never leave it. You don't need to master it, but you do need to know enough to not get stranded.
+
+### The most important concept: Modes
+
+Vim is different from every other editor because it has **modes**. When you open Vim, you cannot just start typing. You start in **Normal mode**, which is for navigation and commands, not writing.
+
+| Mode        | What it's for            | How to get there     |
+|:------------|:-------------------------|:---------------------|
+| **Normal**  | Navigation, commands     | `Esc` (always works) |
+| **Insert**  | Actually typing text     | `i` from Normal mode |
+| **Visual**  | Selecting text           | `v` from Normal mode |
+| **Command** | Saving, quitting, search | `:` from Normal mode |
+
+The golden rule: **if you're lost, press `Esc` and you'll be back in Normal mode.**
+
+### Opening a file
+```bash
+vim index.html
+```
+
+### The survival cheat sheet
+
+These are the only things you need to know to not get stuck:
+
+**Getting in and out:**
+
+| Action              | Command                  |
+|:--------------------|:-------------------------|
+| Start editing       | `i` (enters Insert mode) |
+| Stop editing        | `Esc`                    |
+| Save                | `:w` then `Enter`        |
+| Quit                | `:q` then `Enter`        |
+| Save & quit         | `:wq` then `Enter`       |
+| Quit without saving | `:q!` then `Enter`       |
+
+> The `:` commands are typed in Normal mode. Press `Esc` first if you're unsure, then type `:wq`.
+
+**Moving around** (in Normal mode, no mouse needed):
+
+| Action                  | Command         |
+|:------------------------|:----------------|
+| Move left/down/up/right | `h` `j` `k` `l` |
+| Jump to start of line   | `0`             |
+| Jump to end of line     | `$`             |
+| Jump to top of file     | `gg`            |
+| Jump to bottom of file  | `G`             |
+| Jump to line 42         | `:42`           |
+
+**Editing** (in Normal mode):
+
+| Action              | Command                                        |
+|:--------------------|:-----------------------------------------------|
+| Delete a whole line | `dd`                                           |
+| Undo                | `u`                                            |
+| Redo                | `Ctrl + R`                                     |
+| Copy a line         | `yy`                                           |
+| Paste               | `p`                                            |
+| Search              | `/searchterm` then `Enter`, `n` for next match |
+
+### The typical Vim session
+```bash
+vim config.yaml      # open the file
+i                    # enter Insert mode
+# ...make your edits...
+Esc                  # back to Normal mode
+:wq                  # save and quit
+```
+
+### Changing your default Git editor
+
+If you want Git commit messages to open in Nano instead of Vim (or vice versa), run:
+```bash
+# Set Nano as default
+git config --global core.editor "nano"
+
+# Set Vim as default
+git config --global core.editor "vim"
+
+# Set VS Code as default (if you'd rather stay out of the terminal entirely)
+git config --global core.editor "code --wait"
+```
+
+---
+
+## 🪟 Windows Notes
+
+On WSL, both `nano` and `vim` are available exactly as described above - the commands are identical. If you're on plain PowerShell or cmd, neither is available by default. Another good reason to use WSL.
+
+---
+
+## 🐛 Troubleshooting
+
+### "I'm stuck in Vim and can't get out"
+
+Press `Esc` a couple of times to make sure you're in Normal mode, then type `:q!` and hit `Enter`. The `!` means "I don't care about unsaved changes, just get me out."
+
+### "Vim opened and I can't type anything"
+
+You're in Normal mode. Press `i` to enter Insert mode, then type freely. Press `Esc` when done.
+
+### "I typed `:wq` but it just appeared as text in my file"
+
+You're still in Insert mode. Press `Esc` first, then type `:wq`.
+
+### "nano: command not found"
+
+On a minimal Linux/WSL setup, Nano might not be pre-installed. Run:
+```bash
+sudo apt install nano
+```
