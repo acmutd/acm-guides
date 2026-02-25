@@ -209,13 +209,13 @@ useEffect(() => {
 Now when the page loads, it automatically pulls data from the FastAPI backend
 
 #### **Step 4: Replace "Fake Refresh" With Real Refresh**
-Update the button inside the header. The button code is on Line xx in the same file.
+Update the button inside the header. The button code is on Line 39 in the same file.
 ```js
 onClick={fetchStatus}
 disabled={loading}
 ```
 
-And then, update the button text:
+And then, replace the button text on Line 41:
 ```js
 {loading ? "Loading..." : "Refresh"}
 ```
