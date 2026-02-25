@@ -8,9 +8,9 @@ export const meta = {
 
 Welcome! In this guide, we will set up **Postman**, the industry-standard tool for testing, documenting, and building APIs.
 
-**What you’ll learn:**
+**What you'll learn:**
 
-- **The Concept:** Understanding APIs using the "Restaurant" metaphor.
+- **The Concept:** Understanding <Tooltip tip="Application Programming Interface: a set of rules that lets two pieces of software talk to each other">APIs</Tooltip> using the "Restaurant" metaphor.
 - **The Setup:** How to install and configure Postman on Windows and macOS.
 - **The Commands:** The essential cheat sheet for making requests.
 
@@ -20,17 +20,17 @@ Welcome! In this guide, we will set up **Postman**, the industry-standard tool f
 
 Think of an **API** (Application Programming Interface) as a **waiter in a restaurant**.
 
-1.  **You (The Client):** You look at the menu (documentation) and give an order (request) to the waiter.
+1.  **You (The Client):** You look at the menu (documentation) and give an order (<Tooltip tip="A message your app sends to a server asking it to do something like fetch data or save a record">request</Tooltip>) to the waiter.
 2.  **The Waiter (The API):** Takes your order to the kitchen and ensures it's formatted correctly.
 3.  **The Kitchen (The Server):** Prepares your food (data).
-4.  **The Waiter:** Brings the food back to you (response).
+4.  **The Waiter:** Brings the food back to you (<Tooltip tip="The server's reply to your request, usually containing data or a status code indicating success or failure">response</Tooltip>).
 
 ### The Anatomy of a Request
 
 Just like a sentence needs a verb and a noun, an API request needs specific parts to work.
 
 | Part              | Description                                                   |
-| :---------------- | :------------------------------------------------------------ |
+|:------------------|:--------------------------------------------------------------|
 | **Method (Verb)** | What you want to do (e.g., `GET` implies retrieving data).    |
 | **URL (Address)** | Where the kitchen lives (e.g., `api.github.com/users`).       |
 | **Headers**       | Meta-information, like authentication tokens or content type. |
@@ -66,7 +66,7 @@ You have two easy options.
 3.  Unzip the file and drag the **Postman** app into your `Applications` folder.
 
 **Option B: Homebrew (Preferred)**
-If you have [Homebrew](https://brew.sh/) installed:
+If you have Homebrew installed:
 
 ```bash
 brew install --cask postman
@@ -98,12 +98,12 @@ Once installed, organizing your work is key. Postman uses **Collections** to gro
 
 ## ⚡ 4. Essential Commands
 
-These are the HTTP methods you will use 99% of the time.
+These are the <Tooltip tip="The standardized request types defined by HTTP that tell the server what action you want to perform">HTTP methods</Tooltip> you will use 99% of the time.
 
-### The "CRUD" Actions
+### The "<Tooltip tip="Create, Read, Update, Delete — the four fundamental operations for working with data">CRUD</Tooltip>" Actions
 
 | Action     | Method      | Description                                           |
-| :--------- | :---------- | :---------------------------------------------------- |
+|:-----------|:------------|:------------------------------------------------------|
 | **Create** | `POST`      | Send new data to the server (e.g., Sign up a user).   |
 | **Read**   | `GET`       | Retrieve data from the server (e.g., Load a profile). |
 | **Update** | `PUT/PATCH` | Edit existing data (e.g., Change a password).         |
@@ -111,7 +111,7 @@ These are the HTTP methods you will use 99% of the time.
 
 ### The Request Cycle
 
-Every time you want to test an endpoint, follow this 3-step rhythm:
+Every time you want to test an <Tooltip tip="A specific URL your app can call to perform an action, i.e. `/users` or `/todos/1`">endpoint</Tooltip>, follow this 3-step rhythm:
 
 **1. Configure**
 Select your method and paste the URL.
@@ -123,7 +123,7 @@ Select your method and paste the URL.
 **2. Send**
 Hit the big blue **Send** button.
 
-- _Watch the bottom pane:_ This is where the JSON response appears.
+- _Watch the bottom pane:_ This is where the <Tooltip tip="A lightweight data format used to send structured data between a server and client, i.e. `{ 'name': 'Alice' }`">JSON</Tooltip> response appears.
 - _Check the status:_ Look for **200 OK** in green.
 
 **3. Save**
@@ -146,7 +146,7 @@ The waiter couldn't find what you asked for.
 
 The bouncer stopped you at the door.
 
-- **Fix:** You need an API Key or Token. Go to the **Auth** tab in your request, select "Bearer Token" (or "API Key"), and paste your credential.
+- **Fix:** You need an <Tooltip tip="A secret key passed with requests to prove who you are and that you're allowed to access the resource">API Key or Token</Tooltip>. Go to the **Auth** tab in your request, select "<Tooltip tip="An authentication method where you pass a token string in the request header — the server checks it before granting access">Bearer Token</Tooltip>" (or "API Key"), and paste your credential.
 
 ### "Could not get any response"
 
