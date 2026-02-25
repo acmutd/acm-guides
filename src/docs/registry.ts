@@ -130,7 +130,22 @@ for (const path in modules) {
 }
 
 sortTree(SIDEBAR_TREE);
-ALL_DOCS.sort((a, b) => a.slug.localeCompare(b.slug));
+const orderedSlugs: string[] = [];
+function collectSlugs(nodes: (DocNode | CategoryNode)[]) {
+  for (const node of nodes) {
+    if (node.type === 'doc') {
+      orderedSlugs.push(node.slug);
+    } else {
+      collectSlugs(node.items);
+    }
+  }
+}
+collectSlugs(SIDEBAR_TREE);
+ALL_DOCS.sort((a, b) => {
+  const ai = orderedSlugs.indexOf(a.slug);
+  const bi = orderedSlugs.indexOf(b.slug);
+  return ai - bi;
+});
 
 export function getDoc(slug: string) {
   return ALL_DOCS.find((d) => d.slug === slug);
