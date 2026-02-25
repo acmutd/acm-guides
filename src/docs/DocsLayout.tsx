@@ -543,13 +543,27 @@ function useHeadings() {
           if (entry.isIntersecting) setActiveId(entry.target.id);
         });
       },
-      { rootMargin: '0px 0px -80% 0px' }
+      { rootMargin: '-10% 0px -40% 0px' }
     );
 
     const elements = document.querySelectorAll('article h2, article h3');
     elements.forEach((elem) => observer.observe(elem));
 
-    return () => observer.disconnect();
+    const handleScroll = () => {
+      const scrollPosition = window.innerHeight + Math.round(window.scrollY);
+      const documentHeight = document.documentElement.scrollHeight;
+
+      if (scrollPosition >= documentHeight - 10) {
+        setActiveId(headings[headings.length - 1].id);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, [headings]);
 
   return { headings, activeId, setActiveId, contentRef };
