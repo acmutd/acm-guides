@@ -1,8 +1,6 @@
-// @ts-expect-error ts dumb
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { DOCS } from './registry';
-import { GradientText } from '../components/navbar.tsx';
+import { GradientText } from '../components/GradientText';
 
 export default function DocsIndex() {
   return (

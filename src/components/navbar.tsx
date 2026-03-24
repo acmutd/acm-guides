@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Disclosure } from '@headlessui/react';
 import {
@@ -7,6 +7,7 @@ import {
   ArrowTopRightOnSquareIcon,
 } from '@heroicons/react/24/outline';
 import { useTheme } from '../ThemeContext';
+import { GradientText } from './GradientText';
 
 const links = [
   { name: 'home', to: '/' },
@@ -53,14 +54,6 @@ function navLinkClass(isActive: boolean) {
       ? 'bg-zinc-900/5 border-zinc-900/10 text-zinc-900 dark:bg-white/10 dark:text-white dark:border-white/20'
       : 'bg-transparent border-transparent text-zinc-500 hover:bg-zinc-900/5 hover:text-zinc-900 dark:text-white/70 dark:hover:border-white/10 dark:hover:bg-white/5 dark:hover:text-white',
   ].join(' ');
-}
-
-export function GradientText({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="bg-development-gradient bg-clip-text text-transparent bg-size-200 animate-gradient">
-      {children}
-    </span>
-  );
 }
 
 export default function Navbar({

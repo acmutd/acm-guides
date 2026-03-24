@@ -20,7 +20,7 @@ export type DocEntry = {
     updated?: string;
     order?: number;
   };
-  load: () => Promise<never>;
+  load: () => Promise<Record<string, unknown>>;
 };
 
 const CATEGORY_ORDER = [
@@ -98,7 +98,7 @@ for (const path in modules) {
       updated: fm?.updated,
       order: fm?.order,
     },
-    load: modules[path] as never,
+    load: modules[path] as () => Promise<Record<string, unknown>>,
   };
 
   ALL_DOCS.push(entry);
@@ -156,10 +156,7 @@ function updatedKey(doc: DocEntry) {
 }
 
 export function getRecentWorkshops(count = 3) {
-  let workshops = ALL_DOCS;
-  if (workshops.length === 0) workshops = ALL_DOCS;
-
-  return workshops
+  return ALL_DOCS
     .slice()
     .sort((a, b) => updatedKey(b).localeCompare(updatedKey(a)))
     .slice(0, count);

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { ClipboardDocumentIcon, CheckIcon } from '@heroicons/react/24/outline';
 
 export default function Pre({
@@ -12,9 +12,10 @@ export default function Pre({
   const onCopy = () => {
     if (!preRef.current) return;
     const text = preRef.current.textContent || '';
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
   };
 
   return (

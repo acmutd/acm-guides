@@ -1,21 +1,7 @@
-import ParallaxImages from '../components/parallaxImages';
-import Navbar from '../components/navbar';
-
-function GradientText({
-  children,
-  gradient = 'bg-development-gradient',
-}: {
-  children: React.ReactNode;
-  gradient?: string;
-}) {
-  return (
-    <span
-      className={`${gradient} bg-clip-text text-transparent bg-size-200 animate-gradient inline-block px-1 py-1 leading-tight`}
-    >
-      {children}
-    </span>
-  );
-}
+import { Link } from 'react-router-dom';
+import ParallaxImages from './parallaxImages';
+import Navbar from './navbar';
+import { GradientText } from './GradientText';
 
 export default function NotFound() {
   return (
@@ -69,18 +55,18 @@ export default function NotFound() {
             </div>
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 md:gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-400 w-full md:w-auto">
-              <a
-                href="/"
+              <Link
+                to="/"
                 className="text-center rounded-full bg-zinc-900 text-white px-6 py-2.5 md:px-8 md:py-3 text-sm font-black uppercase tracking-wide hover:bg-zinc-800 hover:scale-105 transition-all shadow-xl dark:bg-white dark:text-black dark:hover:bg-zinc-200 dark:shadow-[0_0_30px_rgba(255,255,255,0.3)]"
               >
                 Start Learning
-              </a>
-              <a
-                href="/docs"
+              </Link>
+              <Link
+                to="/docs"
                 className="text-center rounded-full border-2 border-zinc-300 bg-transparent text-zinc-900 px-6 py-2.5 md:px-8 md:py-3 text-sm font-black uppercase tracking-wide hover:bg-zinc-100 hover:scale-105 transition-all dark:border-white/30 dark:text-white dark:hover:bg-white/10"
               >
                 Browse All Docs
-              </a>
+              </Link>
             </div>
           </div>
 

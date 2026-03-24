@@ -236,6 +236,20 @@
   }
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  33% { transform: translateY(-10px) translateX(5px); }
+  66% { transform: translateY(5px) translateX(-5px); }
+}
+
+.animate-float {
+  animation: float infinite ease-in-out;
+}
+
+.parallax-layer {
+  will-change: transform;
+}
+
 .scrollbar-hover {
   scrollbar-color: transparent transparent;
 }

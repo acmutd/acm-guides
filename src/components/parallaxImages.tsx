@@ -1,5 +1,4 @@
-'use client';
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { peechi, orb1, orb2, orb3, orb4, orb5, orb6, orb7 } from './data';
 
 const multipliers: { [key: string]: number } = {
@@ -13,7 +12,25 @@ const multipliers: { [key: string]: number } = {
   orb7: 0.04,
 };
 
-const ParallaxImages: React.FC = () => {
+const ORB_CONFIGS = [
+  { src: 'orb1', name: 'orb1', className: 'left-[5%] top-[10%]', size: 'w-32', blur: '2px' },
+  { src: 'orb2', name: 'orb2', className: 'right-[10%] bottom-[20%]', size: 'w-48', blur: '1px' },
+  { src: 'orb3', name: 'orb3', className: 'left-[15%] bottom-[15%]', size: 'w-32', blur: '0px' },
+  { src: 'orb4', name: 'orb4', className: 'right-[25%] top-[15%]', size: 'w-40', blur: '0px' },
+  { src: 'orb5', name: 'orb5', className: 'left-[40%] top-[60%]', size: 'w-24', blur: '0px' },
+  { src: 'orb6', name: 'orb6', className: 'left-[20%] top-[30%]', size: 'w-48', blur: '0px' },
+  { src: 'orb7', name: 'orb7', className: 'left-[-5%] top-[30%]', size: 'w-64', blur: '4px' },
+  { src: 'orb1', name: 'orb1', className: 'left-[70%] top-[80%]', size: 'w-42', blur: '2px' },
+] as const;
+
+const orbSrcMap: Record<string, string> = { orb1, orb2, orb3, orb4, orb5, orb6, orb7 };
+
+const orbAnimations = ORB_CONFIGS.map(() => ({
+  duration: 10 + Math.random() * 10 + 's',
+  delay: '-' + Math.random() * 10 + 's',
+}));
+
+const ParallaxImages = () => {
   const rafRef = useRef<number | undefined>(undefined);
   const mousePos = useRef({ x: 0, y: 0 });
   const isHovering = useRef(false);
@@ -54,7 +71,6 @@ const ParallaxImages: React.FC = () => {
 
       if (!isHovering.current) return;
 
-      // Cancel previous frame and request new one (safari throttling workaround me thinks)
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current);
       }
@@ -128,64 +144,13 @@ const ParallaxImages: React.FC = () => {
     };
   }, []);
 
-  const styles = `
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) translateX(0px); }
-      33% { transform: translateY(-10px) translateX(5px); }
-      66% { transform: translateY(5px) translateX(-5px); }
-    }
-    .animate-float {
-      animation: float infinite ease-in-out;
-    }
-    .parallax-layer {
-      will-change: transform;
-    }
-  `;
-
-  const renderOrb = (
-    src: string,
-    name: string,
-    className: string,
-    size: string,
-    blur = '0px'
-  ) => {
-    const duration = 10 + Math.random() * 10 + 's';
-    const delay = '-' + Math.random() * 10 + 's';
-
-    const blurClass =
-      blur === '4px'
-        ? 'blur-sm'
-        : blur === '2px'
-          ? 'blur-[2px]'
-          : blur === '1px'
-            ? 'blur-[1px]'
-            : '';
-
-    return (
-      <div className={`parallax-layer absolute ${name} ${className} z-0`}>
-        <img
-          src={src}
-          alt=""
-          className={`animate-float transition-opacity duration-300 ${size} ${blurClass}
-            opacity-90 hover:opacity-100 mix-blend-multiply dark:mix-blend-normal dark:opacity-70 dark:hover:opacity-100`}
-          style={{
-            animationDuration: duration,
-            animationDelay: delay,
-          }}
-        />
-      </div>
-    );
-  };
-
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden transition-colors duration-500 bg-zinc-50 dark:bg-black">
-      <style>{styles}</style>
-
-      <div className="absolute inset-0 z-[1] opacity-[0.03] dark:opacity-[0.03] mix-blend-overlay">
+      <div className="absolute inset-0 z-[1] opacity-[0.03] mix-blend-overlay">
         <svg
           viewBox="0 0 200 200"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full opacity-100"
+          className="w-full h-full"
         >
           <filter id="noiseFilter">
             <feTurbulence
@@ -199,7 +164,6 @@ const ParallaxImages: React.FC = () => {
         </svg>
       </div>
 
-      {/* Gradient blobs - reduced blur */}
       <div
         className="absolute -left-[10%] -top-[10%] w-[50vw] h-[50vw] rounded-full blur-2xl z-0
         bg-[radial-gradient(circle,rgba(168,85,247,0.4)_0%,transparent_70%)]
@@ -228,14 +192,31 @@ const ParallaxImages: React.FC = () => {
         />
       </div>
 
-      {renderOrb(orb1, 'orb1', 'left-[5%] top-[10%]', 'w-32', '2px')}
-      {renderOrb(orb2, 'orb2', 'right-[10%] bottom-[20%]', 'w-48', '1px')}
-      {renderOrb(orb3, 'orb3', 'left-[15%] bottom-[15%]', 'w-32', '0px')}
-      {renderOrb(orb4, 'orb4', 'right-[25%] top-[15%]', 'w-40', '0px')}
-      {renderOrb(orb5, 'orb5', 'left-[40%] top-[60%]', 'w-24', '0px')}
-      {renderOrb(orb6, 'orb6', 'left-[20%] top-[30%]', 'w-48', '0px')}
-      {renderOrb(orb7, 'orb7', 'left-[-5%] top-[30%]', 'w-64', '4px')}
-      {renderOrb(orb1, 'orb1', 'left-[70%] top-[80%]', 'w-42', '2px')}
+      {ORB_CONFIGS.map((orb, i) => {
+        const blurClass =
+          orb.blur === '4px'
+            ? 'blur-sm'
+            : orb.blur === '2px'
+              ? 'blur-[2px]'
+              : orb.blur === '1px'
+                ? 'blur-[1px]'
+                : '';
+
+        return (
+          <div key={i} className={`parallax-layer absolute ${orb.name} ${orb.className} z-0`}>
+            <img
+              src={orbSrcMap[orb.src]}
+              alt=""
+              className={`animate-float transition-opacity duration-300 ${orb.size} ${blurClass}
+                opacity-90 hover:opacity-100 mix-blend-multiply dark:mix-blend-normal dark:opacity-70 dark:hover:opacity-100`}
+              style={{
+                animationDuration: orbAnimations[i].duration,
+                animationDelay: orbAnimations[i].delay,
+              }}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 };

@@ -16,23 +16,20 @@ import {
   type DocNode,
   type CategoryNode,
 } from './registry';
-import Navbar from '../components/navbar.tsx';
+import Navbar from '../components/navbar';
 import DocsIndex from './DocIndex';
 import Pre from '../components/pre';
-import { GithubRepo } from '../components/githubRepo.tsx';
-import { Tooltip } from '../components/Tooltip.tsx';
+import { GithubRepo } from '../components/githubRepo';
+import { Tooltip } from '../components/Tooltip';
 
 function classNames(...xs: Array<string | false | undefined>) {
   return xs.filter(Boolean).join(' ');
 }
 
 function stripEmojis(str: string) {
-  return (
-    str
-      // this might error in ur IDE, it works tho trust
-      .replace(/\p{Extended_Pictographic}|\uFE0F/gu, '')
-      .trim()
-  );
+  return str
+    .replace(/\p{Extended_Pictographic}|\uFE0F/gu, '')
+    .trim();
 }
 
 function isNodeActive(
@@ -170,8 +167,7 @@ function MobileTOCDrawer({
 }: {
   open: boolean;
   onClose: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  headings: any[];
+  headings: { id: string; text: string; level: number }[];
   activeId: string;
   setActiveId: (id: string) => void;
 }) {
@@ -250,8 +246,7 @@ function MobileDocHeader({
   onTocOpen,
   onGuidesOpen,
 }: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  entry: any;
+  entry: { meta: { title: string } };
   onTocOpen: () => void;
   onGuidesOpen: () => void;
 }) {
@@ -343,7 +338,6 @@ function SidebarItem({
   const basePadding = 16;
 
   if (node.type === 'doc') {
-    visitedPages.has(node.slug);
     return (
       <NavLink
         to={`/docs/${node.slug}`}
@@ -626,8 +620,7 @@ function DocsContent() {
     if (!entry) return null;
     return React.lazy(async () => {
       const mod = await entry.load();
-      // @ts-expect-error type safety is for the weak
-      return { default: mod.default };
+      return { default: (mod as { default: React.ComponentType }).default };
     });
   }, [entry]);
 

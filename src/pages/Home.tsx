@@ -1,24 +1,8 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { getRecentWorkshops } from '../docs/registry';
+import { getRecentWorkshops, type DocEntry } from '../docs/registry';
 import ParallaxImages from '../components/parallaxImages';
 import Navbar from '../components/navbar';
-
-function GradientText({
-  children,
-  gradient = 'bg-development-gradient',
-}: {
-  children: React.ReactNode;
-  gradient?: string;
-}) {
-  return (
-    <span
-      className={`${gradient} bg-clip-text text-transparent bg-size-200 animate-gradient inline-block px-1 py-1 leading-tight`}
-    >
-      {children}
-    </span>
-  );
-}
+import { GradientText } from '../components/GradientText';
 
 function MiniWorkshopCard({
   to,
@@ -133,22 +117,14 @@ export default function Home() {
           </div>
 
           <div className="flex gap-4 overflow-x-auto pb-4 pt-2 scrollbar-hide mask-linear-fade">
-            {recent.map(
-              (
-                w: {
-                  slug: React.Key | null | undefined;
-                  meta: { title: string };
-                },
-                i: number
-              ) => (
+            {recent.map((w: DocEntry, i: number) => (
                 <MiniWorkshopCard
                   key={w.slug}
                   to={`/docs/${w.slug}`}
                   title={w.meta.title}
                   badge={i === 0 ? 'New' : undefined}
                 />
-              )
-            )}
+            ))}
           </div>
         </div>
       </div>
